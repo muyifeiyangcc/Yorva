@@ -100,6 +100,15 @@ extension UIColor {
     }
 }
 
+extension UIApplication {
+    var activeKeyWindow: UIWindow? {
+        connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow)
+    }
+}
+
 // MARK: - 延时主线程（用于过渡动画 / 加载占位）
 
 func dispatchMain(_ block: @escaping () -> Void) {

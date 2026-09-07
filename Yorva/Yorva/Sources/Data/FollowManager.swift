@@ -51,6 +51,12 @@ final class FollowManager {
         relations.filter { $0.followeeId == userId }.map { $0.followerId }
     }
 
+    func removeRelations(for userId: String) {
+        relations.removeAll { $0.followerId == userId || $0.followeeId == userId }
+        persist()
+        DataRepository.shared.broadcast(.followChanged)
+    }
+
     private func persist() {
         let dtos = relations.map { FollowDTO(from: $0) }
         if let data = try? JSONEncoder().encode(dtos) {

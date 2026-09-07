@@ -1,0 +1,4 @@
+
+module IQTextInputViewNotification.Swift {
+  header "IQTextInputViewNotification-Swift.h"
+}

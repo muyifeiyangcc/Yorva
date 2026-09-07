@@ -1,0 +1,4 @@
+
+module SnapKit.__Swift {
+  exclude header "SnapKit-Swift.h"
+}

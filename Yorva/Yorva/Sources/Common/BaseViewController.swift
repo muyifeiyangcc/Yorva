@@ -21,6 +21,9 @@ class BaseViewController: UIViewController {
     /// 是否为二级及更深页面（隐藏 TabBar、提供返回）
     var isSecondaryLevel: Bool { false }
 
+    /// 是否隐藏系统导航栏（默认隐藏，使用自定义顶部栏；协议页等需系统导航栏时重写为 false）
+    var prefersNavigationBarHidden: Bool { true }
+
     /// 内容容器（自动纵向滚动）
     private(set) var scrollView: UIScrollView?
     private(set) var contentView: UIView?
@@ -41,6 +44,8 @@ class BaseViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // 统一控制系统导航栏显隐：在 viewWillAppear 设置以保证 push/pop 返回时正确恢复
+        navigationController?.setNavigationBarHidden(prefersNavigationBarHidden, animated: animated)
         configureTabBarVisibility()
         configureNavigationBarAppearance()
         refreshData()
@@ -56,12 +61,16 @@ class BaseViewController: UIViewController {
 
     // MARK: - Base appearance
 
+    private func configureBaseAppearance() {
+        navigationItem.largeTitleDisplayMode = .never
+    }
+
     /// 二级页面隐藏 TabBar；根页面保留（铁律 5）
     private func configureTabBarVisibility() {
-        if isSecondaryLevel {
-            tabBarController?.tabBar.isHidden = true
+        if let mainTabBarController = tabBarController as? MainTabBarController {
+            mainTabBarController.setCustomTabBarHidden(isSecondaryLevel)
         } else {
-            tabBarController?.tabBar.isHidden = false
+            tabBarController?.tabBar.isHidden = isSecondaryLevel
         }
     }
 
@@ -105,6 +114,8 @@ class BaseViewController: UIViewController {
         let sv = UIScrollView()
         sv.alwaysBounceVertical = true
         sv.showsVerticalScrollIndicator = true
+        sv.keyboardDismissMode = .interactive
+        sv.contentInsetAdjustmentBehavior = .always
         sv.backgroundColor = .clear
         sv.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sv)

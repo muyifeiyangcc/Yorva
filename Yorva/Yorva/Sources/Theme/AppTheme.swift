@@ -43,6 +43,16 @@ enum AppTheme {
     static let bgSettings = UIColor(hex: 0xF2EFEA)
     static let bgRecharge = UIColor(hex: 0xF5F2EC)
     static let bgSheet    = UIColor.white
+
+    // MARK: - Semantic text colors
+    static let textPrimary   = ink
+    static let textSecondary = UIColor(hex: 0x5C5C5C)
+    static let textTertiary  = stone
+    static let textOnPrimary = UIColor.white
+    static let textLink      = link
+    static let textBrand     = primary
+    static let textError     = error
+    static let textCoins     = coins
 }
 
 extension UIColor {

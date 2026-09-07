@@ -13,10 +13,13 @@ final class LoadingView: UIView {
 
     private let indicator = UIActivityIndicatorView(style: .medium)
     private let label = UILabel()
+    private var emptyStateView: EmptyStateView?
 
     enum State { case loading, empty(title: String, subtitle: String, actionTitle: String?), parseError }
     var state: State = .loading { didSet { applyState() } }
-    var onAction: (() -> Void)?
+    var onAction: (() -> Void)? {
+        didSet { emptyStateView?.onAction = onAction }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,13 +41,17 @@ final class LoadingView: UIView {
     required init?(coder: NSCoder) { fatalError() }
 
     func show(in view: UIView) {
-        view.addSubview(self)
-        snp.makeConstraints { make in make.edges.equalToSuperview() }
-        state = .loading
+        if superview !== view {
+            removeFromSuperview()
+            view.addSubview(self)
+            snp.makeConstraints { make in make.edges.equalToSuperview() }
+        }
     }
     func hide() { removeFromSuperview() }
 
     private func applyState() {
+        emptyStateView?.removeFromSuperview()
+        emptyStateView = nil
         switch state {
         case .loading:
             indicator.isHidden = false
@@ -56,6 +63,7 @@ final class LoadingView: UIView {
             let empty = EmptyStateView()
             empty.configure(title: title, subtitle: subtitle, actionTitle: actionTitle)
             empty.onAction = onAction
+            emptyStateView = empty
             addSubview(empty)
             empty.snp.makeConstraints { $0.edges.equalToSuperview() }
             label.text = ""
@@ -69,7 +77,7 @@ final class LoadingView: UIView {
 
 final class EmptyStateView: UIView {
 
-    private let icon = UIView()
+    private let icon = UIImageView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let actionButton = UIButton(type: .system)
@@ -80,16 +88,16 @@ final class EmptyStateView: UIView {
         super.init(frame: frame)
         let stack = UIStackView(arrangedSubviews: [icon, titleLabel, subtitleLabel, actionButton])
         stack.axis = .vertical
-        stack.spacing = 10
+        stack.spacing = 12
         stack.alignment = .center
         addSubview(stack)
         stack.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(24)
         }
-        icon.backgroundColor = AppTheme.cream
-        icon.layer.cornerRadius = 40
-        icon.snp.makeConstraints { make in make.size.equalTo(80) }
+        icon.contentMode = .scaleAspectFit
+        icon.tintColor = AppTheme.stone
+        icon.snp.makeConstraints { make in make.size.equalTo(CGSize(width: 48, height: 48)) }
         titleLabel.font = AppFont.emptyTitle()
         titleLabel.textColor = AppTheme.textSecondary
         titleLabel.textAlignment = .center
@@ -103,7 +111,11 @@ final class EmptyStateView: UIView {
     }
     required init?(coder: NSCoder) { fatalError() }
 
-    func configure(title: String, subtitle: String, actionTitle: String?) {
+    func configure(title: String, subtitle: String, actionTitle: String?,
+                   iconName: String = "tray") {
+        icon.image = UIImage(systemName: iconName,
+                             withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .regular))?
+            .withTintColor(AppTheme.stone, renderingMode: .alwaysOriginal)
         titleLabel.text = title
         subtitleLabel.text = subtitle
         actionButton.setTitle(actionTitle, for: .normal)

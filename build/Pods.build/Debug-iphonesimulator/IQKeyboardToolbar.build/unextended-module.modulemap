@@ -1,0 +1,10 @@
+framework module IQKeyboardToolbar {
+  umbrella header "IQKeyboardToolbar-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module IQKeyboardToolbar.__Swift {
+  exclude header "IQKeyboardToolbar-Swift.h"
+}

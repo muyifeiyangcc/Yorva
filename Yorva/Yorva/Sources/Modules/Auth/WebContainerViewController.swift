@@ -18,6 +18,7 @@ final class WebContainerViewController: BaseViewController {
 
     override var pageBackgroundColor: UIColor { AppTheme.bgPrimary }
     override var isSecondaryLevel: Bool { true }
+    override var prefersNavigationBarHidden: Bool { false }
 
     override func viewDidLoad() {
         super.viewDidLoad()

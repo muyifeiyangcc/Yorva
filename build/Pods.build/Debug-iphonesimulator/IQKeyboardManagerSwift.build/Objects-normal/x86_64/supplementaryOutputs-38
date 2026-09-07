@@ -1,0 +1,23 @@
+{
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardManagerSwift/IQKeyboardManagerSwift/IQKeyboardManager/IQKeyboardManagerExtension/UIView+IQKeyboardManagerExtensionObjc.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+IQKeyboardManagerExtensionObjc.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+IQKeyboardManagerExtensionObjc.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+IQKeyboardManagerExtensionObjc.dia",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+IQKeyboardManagerExtensionObjc.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+IQKeyboardManagerExtensionObjc.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardManagerSwift/IQKeyboardManagerSwift/IQKeyboardManager/UIKitExtensions/UIView+Parent.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+Parent.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+Parent.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+Parent.dia",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+Parent.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+Parent.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardManagerSwift/IQKeyboardManagerSwift/IQKeyboardManager/UIKitExtensions/UIView+ParentObjc.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+ParentObjc.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+ParentObjc.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+ParentObjc.dia",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+ParentObjc.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardManagerSwift.build/Objects-normal/x86_64/UIView+ParentObjc.swiftdeps"
+  }
+}

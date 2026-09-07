@@ -12,11 +12,14 @@ import SnapKit
 final class ReportViewController: BaseViewController {
 
     var targetUserId: String = ""
-    var targetName: String?
 
-    override var pageBackgroundColor: UIColor { AppTheme.bgPrimary }
+    override var pageBackgroundColor: UIColor { UIColor(hex: 0xFAF9F3) }
     override var isSecondaryLevel: Bool { true }
 
+    private let topBar = UIView()
+    private let backButton = UIButton(type: .system)
+    private let navTitleLabel = UILabel()
+    private let navDivider = UIView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let tableView = UITableView(frame: .zero, style: .plain)
@@ -26,50 +29,89 @@ final class ReportViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Report"
-        setupHierarchy()
-        applyAutoLayoutConstraints()
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func setupHierarchy() {
-        titleLabel.font = AppFont.section()
-        titleLabel.textColor = AppTheme.olive
-        titleLabel.text = "Report \(targetName.map { "@\($0)" } ?? "user")"
-        subtitleLabel.font = AppFont.bodySecondary()
+        topBar.backgroundColor = UIColor(hex: 0xFAF9F3)
+        backButton.setImage(UIImage(systemName: "chevron.backward")?.withTintColor(AppTheme.ink, renderingMode: .alwaysOriginal), for: .normal)
+        backButton.backgroundColor = .white
+        backButton.layer.cornerRadius = 18
+        backButton.layer.borderWidth = 1
+        backButton.layer.borderColor = UIColor(hex: 0xE1E0D9).cgColor
+        backButton.addAction(UIAction { [weak self] _ in self?.navigationController?.popViewController(animated: true) }, for: .touchUpInside)
+        navTitleLabel.attributedText = NSAttributedString(string: "REPORT", attributes: [
+            .font: UIFont.systemFont(ofSize: 16, weight: .regular),
+            .foregroundColor: UIColor(hex: 0x7B7E77),
+            .kern: 1.8
+        ])
+        navTitleLabel.textAlignment = .center
+        navDivider.backgroundColor = UIColor(hex: 0xE1E0D9)
+        titleLabel.font = .systemFont(ofSize: 30, weight: .bold)
+        titleLabel.textColor = AppTheme.ink
+        titleLabel.text = "What’s the issue?"
+        subtitleLabel.font = .systemFont(ofSize: 13, weight: .regular)
         subtitleLabel.textColor = AppTheme.textSecondary
         subtitleLabel.numberOfLines = 0
-        subtitleLabel.text = "Tell us what's wrong with this account. We'll review your report carefully."
+        subtitleLabel.text = "Choose the reason that best describes this content. Your\nreport helps keep Yorva thoughtful and safe."
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
+        tableView.backgroundColor = .white
+        tableView.layer.cornerRadius = 18
+        tableView.layer.borderWidth = 1
+        tableView.layer.borderColor = UIColor(hex: 0xE1E0D9).cgColor
+        tableView.layer.masksToBounds = true
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = UIColor(hex: 0xE8E6DF)
+        tableView.separatorInset = .zero
         tableView.isScrollEnabled = false
+        tableView.rowHeight = 49
         tableView.register(ReportOptionCell.self, forCellReuseIdentifier: ReportOptionCell.reuseIdentifier)
-        submitButton.backgroundColor = AppTheme.primaryDisabled
-        submitButton.isEnabled = false
-        submitButton.setTitleColor(AppTheme.textOnPrimary.withAlphaComponent(0.6), for: .disabled)
+        submitButton.setTitle("Summit", for: .normal)
+        submitButton.backgroundColor = AppTheme.ink
+        submitButton.setTitleColor(.white, for: .normal)
+        submitButton.isEnabled = true
         submitButton.addAction(UIAction { [weak self] _ in self?.attemptSubmit() }, for: .touchUpInside)
-        [titleLabel, subtitleLabel, tableView, submitButton].forEach { view.addSubview($0) }
+        [backButton, navTitleLabel].forEach { topBar.addSubview($0) }
+        [topBar, navDivider, titleLabel, subtitleLabel, tableView, submitButton].forEach { view.addSubview($0) }
     }
 
     override func applyAutoLayoutConstraints() {
+        topBar.snp.makeConstraints { make in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(106)
+        }
+        backButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(6)
+            make.left.equalToSuperview().offset(16)
+            make.size.equalTo(36)
+        }
+        navTitleLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalTo(backButton)
+        }
+        navDivider.snp.makeConstraints { make in
+            make.top.equalTo(topBar.snp.bottom).offset(-1)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(1)
+        }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(topBar.snp.bottom).offset(20)
+            make.left.right.equalToSuperview().inset(17)
         }
         subtitleLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.left.right.equalToSuperview().inset(16)
+            make.left.right.equalToSuperview().inset(17)
         }
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(subtitleLabel.snp.bottom).offset(12)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(CGFloat(ReportReason.allCases.count) * 50)
+            make.top.equalTo(subtitleLabel.snp.bottom).offset(24)
+            make.left.right.equalToSuperview().inset(17)
+            make.height.equalTo(CGFloat(ReportReason.allCases.count) * 49)
             make.bottom.lessThanOrEqualTo(submitButton.snp.top).offset(-12)
         }
         submitButton.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(24)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+            make.left.right.equalToSuperview().inset(10)
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
@@ -99,7 +141,7 @@ extension ReportViewController: UITableViewDataSource, UITableViewDelegate {
         selectedReason = ReportReason.allCases[indexPath.row]
         tableView.reloadData()
         submitButton.isEnabled = true
-        submitButton.backgroundColor = AppTheme.primary
+        submitButton.backgroundColor = AppTheme.ink
     }
 }
 
@@ -109,27 +151,35 @@ final class ReportOptionCell: UITableViewCell {
     private let radioButton = UIImageView()
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .default
-        backgroundColor = .clear
+        selectionStyle = .none
+        backgroundColor = .white
         [titleLabel, radioButton].forEach { contentView.addSubview($0) }
         titleLabel.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(16)
-            make.right.equalTo(radioButton.snp.left).offset(-8)
+            make.left.equalTo(radioButton.snp.right).offset(12)
+            make.right.equalToSuperview().inset(16)
             make.top.bottom.equalToSuperview().inset(12)
         }
         radioButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-16)
+            make.left.equalToSuperview().offset(15)
             make.centerY.equalToSuperview()
             make.size.equalTo(20)
         }
     }
     required init?(coder: NSCoder) { fatalError() }
     func configure(reason: ReportReason, isSelected: Bool) {
-        titleLabel.text = reason.displayName
+        switch reason {
+        case .spam: titleLabel.text = "Spam or scam"
+        case .harassment: titleLabel.text = "Harassment or bullying"
+        case .hate: titleLabel.text = "Hate speech"
+        case .nudity: titleLabel.text = "Nudity or sexual content"
+        case .dangerous: titleLabel.text = "Dangerous activity"
+        case .falseInfo: titleLabel.text = "False water or safety information"
+        case .other: titleLabel.text = "Other"
+        }
         titleLabel.font = isSelected ? AppFont.reportOptionSelected() : AppFont.reportOption()
-        titleLabel.textColor = isSelected ? AppTheme.textBrand : AppTheme.ink
-        contentView.backgroundColor = isSelected ? AppTheme.selectionBg : .clear
+        titleLabel.textColor = AppTheme.ink
+        contentView.backgroundColor = .white
         radioButton.image = UIImage(systemName: isSelected ? "largecircle.fill.circle" : "circle")?
-            .withTintColor(isSelected ? AppTheme.primary : AppTheme.stone, renderingMode: .alwaysOriginal)
+            .withTintColor(isSelected ? UIColor(hex: 0xB9DD00) : UIColor(hex: 0xBFC3BA), renderingMode: .alwaysOriginal)
     }
 }

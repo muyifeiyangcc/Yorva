@@ -28,9 +28,13 @@ final class CustomSheet: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = AppTheme.overlay
+        let backdrop = UIView()
+        backdrop.backgroundColor = .clear
+        addSubview(backdrop)
+        backdrop.snp.makeConstraints { $0.edges.equalToSuperview() }
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleDismiss))
-        tap.cancelsTouchesInView = false
-        addGestureRecognizer(tap)
+        tap.cancelsTouchesInView = true
+        backdrop.addGestureRecognizer(tap)
         addSubview(container)
         container.backgroundColor = AppTheme.bgSheet
         container.layer.cornerRadius = 20
@@ -46,11 +50,13 @@ final class CustomSheet: UIView {
     ///   - title: 顶部标题（可选，符合设计稿顶部居中标题）
     ///   - items: 动态条目（最后一项可标记 isCancel）
     static func show(title: String? = nil, items: [SheetItem]) {
-        guard let host = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.keyWindow else { return }
+        guard let host = UIApplication.shared.activeKeyWindow else { return }
         let sheet = CustomSheet()
         host.addSubview(sheet)
         sheet.snp.makeConstraints { $0.edges.equalToSuperview() }
         sheet.configure(title: title, items: items)
+        host.layoutIfNeeded()
+        sheet.layoutIfNeeded()
         sheet.container.transform = CGAffineTransform(translationX: 0, y: sheet.container.bounds.height)
         sheet.alpha = 0
         UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.85, initialSpringVelocity: 0.4) {
@@ -62,7 +68,6 @@ final class CustomSheet: UIView {
     private func configure(title: String?, items: [SheetItem]) {
         self.items = items
         container.subviews.forEach { $0.removeFromSuperview() }
-        var stack: UIStackView? = nil
         let st = UIStackView()
         st.axis = .vertical
         st.spacing = 0
@@ -71,9 +76,8 @@ final class CustomSheet: UIView {
         st.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(title == nil ? 8 : 0)
             make.left.right.equalToSuperview()
-            make.bottom.equalToSuperview().inset(UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets.bottom ?? 0)
+            make.bottom.equalToSuperview().inset(UIApplication.shared.activeKeyWindow?.safeAreaInsets.bottom ?? 0)
         }
-        stack = st
         if let title = title {
             let titleLabel = UILabel()
             titleLabel.text = title
@@ -81,7 +85,12 @@ final class CustomSheet: UIView {
             titleLabel.textColor = AppTheme.textTertiary
             titleLabel.textAlignment = .center
             let wrap = UIView()
+            container.addSubview(wrap)
             wrap.addSubview(titleLabel)
+            wrap.snp.makeConstraints { make in
+                make.top.left.right.equalToSuperview()
+                make.height.equalTo(46)
+            }
             titleLabel.snp.makeConstraints { make in
                 make.edges.equalToSuperview().inset(UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16))
             }
@@ -95,7 +104,7 @@ final class CustomSheet: UIView {
             st.snp.remakeConstraints { make in
                 make.top.equalTo(div.snp.bottom)
                 make.left.right.equalToSuperview()
-                make.bottom.equalToSuperview().inset(UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets.bottom ?? 0)
+                make.bottom.equalToSuperview().inset(UIApplication.shared.activeKeyWindow?.safeAreaInsets.bottom ?? 0)
             }
         }
         for item in items {

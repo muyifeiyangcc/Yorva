@@ -1,0 +1,23 @@
+{
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/SnapKit/Sources/ConstraintViewDSL.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/ConstraintViewDSL.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/ConstraintViewDSL.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/ConstraintViewDSL.dia",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/ConstraintViewDSL.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/ConstraintViewDSL.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/SnapKit/Sources/Debugging.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/Debugging.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/Debugging.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/Debugging.dia",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/Debugging.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/Debugging.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/SnapKit/Sources/LayoutConstraint.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/LayoutConstraint.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/LayoutConstraint.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/LayoutConstraint.dia",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/LayoutConstraint.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/SnapKit.build/Objects-normal/arm64/LayoutConstraint.swiftdeps"
+  }
+}

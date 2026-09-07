@@ -40,14 +40,24 @@ final class DataRepository {
     }
 
     func user(by id: String) -> User? {
-        if let u = users.first(where: { $0.id == id }) { return u }
-        if let cur = AccountManager.shared.currentUser, cur.id == id { return cur }
+        if let u = users.first(where: { $0.id == id && !$0.isDeleted }) { return u }
+        if let account = AccountManager.shared.accounts.first(where: { $0.id == id && !$0.isDeleted }) { return account }
         return nil
+    }
+
+    /// 将注册/编辑后的账号同步到统一用户仓库，保证跨页面、跨账号都能解析头像和资料。
+    func upsertUser(_ user: User) {
+        guard let index = users.firstIndex(where: { $0.id == user.id }) else {
+            users.append(user)
+            return
+        }
+        users[index] = user
     }
 
     /// 重置全部数据（调试 / 数据解析异常兜底）
     func resetAll() {
         users = SeedData.mockUsers()
+        AccountManager.shared.accounts.forEach { upsertUser($0) }
         ContentManager.shared.reloadSeed()
         ChatManager.shared.reloadSeed()
     }

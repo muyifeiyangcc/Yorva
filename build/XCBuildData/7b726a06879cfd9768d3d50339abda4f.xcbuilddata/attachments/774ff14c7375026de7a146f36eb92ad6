@@ -1,0 +1,4 @@
+
+module IQKeyboardNotification.__Swift {
+  exclude header "IQKeyboardNotification-Swift.h"
+}

@@ -1,0 +1,4 @@
+
+module IQTextInputViewNotification.__Swift {
+  exclude header "IQTextInputViewNotification-Swift.h"
+}

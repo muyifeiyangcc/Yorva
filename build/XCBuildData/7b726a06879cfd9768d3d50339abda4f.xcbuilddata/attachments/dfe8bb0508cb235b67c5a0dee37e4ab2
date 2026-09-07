@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView-primary.dia",
+    "emit-module-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView-primary-emit-module.dia",
+    "pch" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView-primary.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQTextView/IQTextView/Classes/IQTextView+Placeholderable.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView+Placeholderable~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQTextView/IQTextView/Classes/IQTextView.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextView.build/Objects-normal/x86_64/IQTextView~partial.swiftmodule"
+  }
+}

@@ -1,0 +1,4 @@
+
+module IQTextView.__Swift {
+  exclude header "IQTextView-Swift.h"
+}

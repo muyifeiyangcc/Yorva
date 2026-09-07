@@ -10,7 +10,7 @@ import SnapKit
 
 enum Toast {
     static func show(_ message: String, in window: UIWindow? = nil, duration: TimeInterval = 1.6) {
-        guard let host = window ?? UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.keyWindow else { return }
+        guard let host = window ?? UIApplication.shared.activeKeyWindow else { return }
         let toast = ToastView()
         toast.label.text = message
         host.addSubview(toast)

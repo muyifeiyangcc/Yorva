@@ -1,0 +1,49 @@
+{
+  "" : {
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardCore-primary.dia",
+    "emit-module-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardCore-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardCore-primary-emit-module.dia",
+    "pch" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardCore-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardCore-primary.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardCore/IQKeyboardCore/Classes/Constants/IQKeyboardConstants.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardConstants~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardCore/IQKeyboardCore/Classes/IQKeyboardExtended.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQKeyboardExtended~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardCore/IQKeyboardCore/Classes/IQTextInputView.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/IQTextInputView~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardCore/IQKeyboardCore/Classes/UIKitExtensions/UIView+Hierarchy.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardCore.build/Objects-normal/x86_64/UIView+Hierarchy~partial.swiftmodule"
+  }
+}

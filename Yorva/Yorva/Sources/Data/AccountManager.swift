@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class AccountManager {
 
@@ -25,6 +26,7 @@ final class AccountManager {
     private init() {
         loadAccounts()
         loadCurrent()
+        accounts.forEach { DataRepository.shared.upsertUser($0) }
     }
 
     // MARK: - Accounts persistence（轻量持久化，仅本地）
@@ -45,18 +47,17 @@ final class AccountManager {
 
     private func ensurePrebuiltAccount() {
         guard !accounts.contains(where: { $0.email == SeedData.prebuiltTestEmail }) else { return }
-        // 预置账号：123@gmail.com / 12345678；初始金币为 0（铁律 9 + 铁律 10）
         // 默认 1 个关注对象从初始化默认静态数据源随机选取一条；延迟到登录成功时建立关系，避免账号未登录即写入关系
         let prebuilt = User(
             id: "user-prebuilt",
             email: SeedData.prebuiltTestEmail,
             passwordDigest: SeedData.prebuiltTestPassword,
-            nickname: "Yorva Tester",
+            nickname: "yorva",
             avatarPlaceholderColor: AppTheme.primary,
             avatarInitials: "YT",
             bio: "Trying Yorva for the first time.",
             birthday: "1996-04-22",
-            location: "Beijing",
+            location: "Lodon",
             gender: "Female",
             isDeleted: false,
             coins: 0,
@@ -99,7 +100,7 @@ final class AccountManager {
         }
         // 之前删除过同名邮箱：本次注册复活邮箱（铁律 10：删除后失效，但允许新注册同邮箱重新激活）
         let newId = "user-\(UUID().uuidString.prefix(8))"
-        var user = User(
+        let user = User(
             id: newId,
             email: email,
             passwordDigest: password,
@@ -121,6 +122,7 @@ final class AccountManager {
             FollowManager.shared.follow(followerId: newId, followeeId: followee.id)
         }
         accounts.append(user)
+        DataRepository.shared.upsertUser(user)
         persist()
         // 注册成功：进入完善资料页（资料不完整）
         currentUser = user
@@ -139,8 +141,13 @@ final class AccountManager {
         currentUser = user
         isGuest = false
         persistCurrent()
-        // 登录预置账号若未建立默认关注，立即补一条
-        if FollowManager.shared.following(userId: user.id).isEmpty {
+        // 预置测试账号：默认拥有 2 个粉丝（Jamie M. / Elena Vance 关注该账号），幂等建立
+        if user.id == "user-prebuilt" {
+            ["user-jamie", "user-elena"].forEach { followerId in
+                FollowManager.shared.follow(followerId: followerId, followeeId: user.id)
+            }
+        } else if FollowManager.shared.following(userId: user.id).isEmpty {
+            // 其他账号兜底：从初始化静态数据源随机选取 1 个关注对象
             let pool = DataRepository.shared.users.filter { $0.id != user.id }
             if let f = pool.randomElement() { FollowManager.shared.follow(followerId: user.id, followeeId: f.id) }
         }
@@ -160,7 +167,8 @@ final class AccountManager {
     }
 
     /// 完善资料 / 编辑资料
-    func updateProfile(nickname: String, bio: String, birthday: String, location: String, gender: String, avatarColor: UIColor, initials: String) {
+    func updateProfile(nickname: String, bio: String, birthday: String, location: String, gender: String,
+                       avatarColor: UIColor, initials: String, avatarImage: UIImage? = nil) {
         guard var user = currentUser else { return }
         user.nickname = nickname
         user.bio = bio
@@ -169,10 +177,13 @@ final class AccountManager {
         user.gender = gender
         user.avatarPlaceholderColor = avatarColor
         user.avatarInitials = initials
+        // nil means the user explicitly selected the gray system placeholder.
+        user.avatarImage = avatarImage
         currentUser = user
         if let idx = accounts.firstIndex(where: { $0.id == user.id }) {
             accounts[idx] = user
         }
+        DataRepository.shared.upsertUser(user)
         persist()
         DataRepository.shared.broadcast(.profileUpdated)
     }
@@ -189,11 +200,17 @@ final class AccountManager {
     /// 删除账号：本地标记失效，重启无法登录（铁律 10）
     func deleteAccount() {
         guard var user = currentUser else { return }
+        let deletedUserID = user.id
+        FollowManager.shared.removeRelations(for: deletedUserID)
+        BlockManager.shared.removeUserState(deletedUserID)
+        ContentManager.shared.removeUserState(deletedUserID)
+        ChatManager.shared.removeUserState(deletedUserID)
         user.isDeleted = true
         currentUser = nil
         if let idx = accounts.firstIndex(where: { $0.id == user.id }) {
             accounts[idx] = user
         }
+        DataRepository.shared.upsertUser(user)
         persist()
         logout()
     }
@@ -207,7 +224,8 @@ final class AccountManager {
 
     /// 资料是否完整（注册成功后进入完善资料页）
     func isProfileComplete(_ user: User) -> Bool {
-        return !user.nickname.isBlank && !user.birthday.isBlank && !user.location.isBlank && !user.gender.isBlank
+        // Location is optional and is no longer part of profile completion.
+        return !user.nickname.isBlank && !user.birthday.isBlank && !user.gender.isBlank
     }
 
     /// 写入金币变更（仅 CurrencyManager 应调用，避免散落写入）
@@ -259,6 +277,7 @@ private struct UserDTO: Codable {
     let coins: Int
     let diamonds: Int
     let isGuest: Bool
+    let avatarImageData: Data?
 
     init(from u: User) {
         id = u.id; email = u.email; passwordDigest = u.passwordDigest
@@ -266,6 +285,7 @@ private struct UserDTO: Codable {
         avatarInitials = u.avatarInitials; bio = u.bio
         birthday = u.birthday; location = u.location; gender = u.gender
         isDeleted = u.isDeleted; coins = u.coins; diamonds = u.diamonds; isGuest = u.isGuest
+        avatarImageData = u.avatarImage?.jpegData(compressionQuality: 0.85)
     }
     func toUser() -> User {
         User(id: id, email: email, passwordDigest: passwordDigest,
@@ -273,7 +293,8 @@ private struct UserDTO: Codable {
              avatarPlaceholderColor: Self.color(hex: avatarHex),
              avatarInitials: avatarInitials, bio: bio,
              birthday: birthday, location: location, gender: gender,
-             isDeleted: isDeleted, coins: coins, diamonds: diamonds, isGuest: isGuest)
+             isDeleted: isDeleted, coins: coins, diamonds: diamonds, isGuest: isGuest,
+             avatarImage: avatarImageData.flatMap { UIImage(data: $0) })
     }
     static func hex(from color: UIColor) -> UInt32 {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0

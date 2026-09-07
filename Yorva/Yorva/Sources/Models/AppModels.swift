@@ -24,6 +24,8 @@ struct User {
     var coins: Int
     var diamonds: Int
     var isGuest: Bool                    // 游客态标识（铁律 2）
+    var avatarImage: UIImage? = nil      // 用户选择的头像（仅运行期资源）
+    var avatarAssetName: String? = nil   // 本地 Asset Catalog 中的头像资源名（初始化静态数据）
 }
 
 // MARK: - Theme / Prompt
@@ -44,6 +46,7 @@ struct PromptItem {
     let costType: PromptCostType
     let costAmount: Int          // 0 表示免费
     var isUsed: Bool
+    var metadata: String = ""
 }
 
 // MARK: - Post
@@ -54,6 +57,39 @@ struct PostMedia {
     let aspectRatio: CGFloat    // 原比例宽高比（图片按原比例显示，铁律 11）
     let duration: TimeInterval? // 视频时长
     let placeholderColor: UIColor
+    let image: UIImage?         // 用户选择的图片（仅运行期资源）
+    let videoURL: URL?          // 用户选择的视频（仅运行期资源）
+    let imageAssetName: String?  // 本地 Asset Catalog 中的图片资源名（初始化静态数据）
+    let videoResourceName: String? // App Bundle 内视频文件名（不含扩展名，位于 file/ 资源目录）
+
+    init(kind: Kind, aspectRatio: CGFloat, duration: TimeInterval?, placeholderColor: UIColor,
+         image: UIImage? = nil, videoURL: URL? = nil,
+         imageAssetName: String? = nil, videoResourceName: String? = nil) {
+        self.kind = kind
+        self.aspectRatio = aspectRatio
+        self.duration = duration
+        self.placeholderColor = placeholderColor
+        self.image = image
+        self.videoURL = videoURL
+        self.imageAssetName = imageAssetName
+        self.videoResourceName = videoResourceName
+    }
+
+    /// 解析最终展示图片：优先用户运行期选择的图片，其次本地 Asset 资源
+    var resolvedImage: UIImage? {
+        if let image { return image }
+        if let name = imageAssetName { return UIImage(named: name) }
+        return nil
+    }
+
+    /// 解析最终播放地址：优先用户运行期视频，其次 App Bundle 内打包的视频资源
+    var resolvedVideoURL: URL? {
+        if let videoURL { return videoURL }
+        if let name = videoResourceName {
+            return Bundle.main.url(forResource: name, withExtension: "mp4")
+        }
+        return nil
+    }
 }
 
 struct Post {
@@ -97,6 +133,26 @@ struct ChatMessage {
     var voiceDuration: TimeInterval?
     var isPlayed: Bool
     var createdAt: Date
+    var image: UIImage? = nil        // 用户选择的图片（仅运行期资源）
+    var voiceURL: URL? = nil         // 录音文件 URL（仅运行期资源）
+
+    init(id: String, conversationId: String, senderId: String, type: MessageType,
+         text: String?, imageColor: UIColor?, imageRatio: CGFloat?,
+         voiceDuration: TimeInterval?, isPlayed: Bool, createdAt: Date,
+         image: UIImage? = nil, voiceURL: URL? = nil) {
+        self.id = id
+        self.conversationId = conversationId
+        self.senderId = senderId
+        self.type = type
+        self.text = text
+        self.imageColor = imageColor
+        self.imageRatio = imageRatio
+        self.voiceDuration = voiceDuration
+        self.isPlayed = isPlayed
+        self.createdAt = createdAt
+        self.image = image
+        self.voiceURL = voiceURL
+    }
 }
 
 struct Conversation {
@@ -105,6 +161,8 @@ struct Conversation {
     var lastMessage: ChatMessage?
     var unreadCount: Int
     var isYorvaAI: Bool
+    /// 会话所属账号；旧种子会在首次载入时绑定到当前账号。
+    var ownerId: String? = nil
 }
 
 // MARK: - Relation / Report

@@ -2,9 +2,7 @@
 //  BlockManager.swift
 //  Yorva
 //
-//  拉黑业务（铁律 6、铁律 8 第 4 点）
-//  本地持久化保存拉黑列表；拉黑生效后全页面实时过滤拉黑用户的帖子、评论、聊天消息
-//  与举报逻辑完全独立，不互相调用
+//  拉黑业务：关系按 blocker 账号持久化，并实时过滤内容。
 //
 
 import Foundation
@@ -13,47 +11,77 @@ final class BlockManager {
 
     static let shared = BlockManager()
 
-    private let key = "yorva.block.list.v1"
-    private(set) var blockedIds: [String] = []
+    private let key = "yorva.block.relations.v2"
+    private var relationsByUser: [String: [BlockEntry]] = [:]
 
-    private init() {
-        blockedIds = UserDefaults.standard.stringArray(forKey: key) ?? []
-    }
+    private init() { load() }
+
+    /// 保留原有读取 API，但返回当前账号自己的拉黑列表。
+    var blockedIds: [String] { entriesForCurrentUser().map(\.blockedId) }
 
     func isBlocked(_ userId: String) -> Bool { blockedIds.contains(userId) }
 
-    /// 拉黑用户：本地持久化 + 全局广播，触发所有页面过滤刷新
+    func blockedAt(_ userId: String) -> Date? {
+        entriesForCurrentUser().first { $0.blockedId == userId }?.createdAt
+    }
+
     func block(blockerId: String, blockedId: String) {
-        guard !blockedIds.contains(blockedId) else { return }
-        blockedIds.append(blockedId)
-        UserDefaults.standard.set(blockedIds, forKey: key)
+        var entries = relationsByUser[blockerId] ?? []
+        guard !entries.contains(where: { $0.blockedId == blockedId }) else { return }
+        entries.append(BlockEntry(blockedId: blockedId, createdAt: Date()))
+        relationsByUser[blockerId] = entries
+        persist()
         DataRepository.shared.broadcast(.blockListChanged)
     }
 
-    /// 解除拉黑：内容重新可见
     func unblock(_ userId: String) {
-        blockedIds.removeAll { $0 == userId }
-        UserDefaults.standard.set(blockedIds, forKey: key)
+        let key = currentUserKey
+        relationsByUser[key, default: []].removeAll { $0.blockedId == userId }
+        persist()
         DataRepository.shared.broadcast(.blockListChanged)
     }
 
-    /// 全局过滤拉黑用户的帖子（铁律：拉黑后不展示该用户发布的任何内容）
-    func filterPosts(_ posts: [Post]) -> [Post] {
-        posts.filter { post in
-            !blockedIds.contains(post.authorId)
-        }
-    }
+    func filterPosts(_ posts: [Post]) -> [Post] { posts.filter { !isBlocked($0.authorId) } }
+    func filterComments(_ comments: [Comment]) -> [Comment] { comments.filter { !isBlocked($0.authorId) } }
 
-    /// 全局过滤拉黑用户的评论
-    func filterComments(_ comments: [Comment]) -> [Comment] {
-        comments.filter { c in !blockedIds.contains(c.authorId) }
-    }
-
-    /// 全局过滤拉黑用户的会话（聊天消息实时过滤）
     func filterConversations(_ convs: [Conversation]) -> [Conversation] {
         convs.filter { conv in
             let otherIds = conv.participantIds.filter { $0 != AccountManager.shared.currentUser?.id }
-            return !otherIds.contains { blockedIds.contains($0) }
+            return !otherIds.contains { isBlocked($0) }
         }
     }
+
+    func removeUserState(_ userId: String) {
+        relationsByUser.removeValue(forKey: userId)
+        relationsByUser = relationsByUser.mapValues { $0.filter { $0.blockedId != userId } }
+        persist()
+    }
+
+    private var currentUserKey: String { AccountManager.shared.currentUser?.id ?? "guest" }
+
+    private func entriesForCurrentUser() -> [BlockEntry] {
+        relationsByUser[currentUserKey] ?? []
+    }
+
+    private func load() {
+        if let data = UserDefaults.standard.data(forKey: key),
+           let decoded = try? JSONDecoder().decode([String: [BlockEntry]].self, from: data) {
+            relationsByUser = decoded
+            return
+        }
+        // 一次性兼容旧版全局列表，并归属给当前账号。
+        if let old = UserDefaults.standard.stringArray(forKey: "yorva.block.list.v1"), !old.isEmpty {
+            relationsByUser[currentUserKey] = old.map { BlockEntry(blockedId: $0, createdAt: Date()) }
+            persist()
+        }
+    }
+
+    private func persist() {
+        if let data = try? JSONEncoder().encode(relationsByUser) { UserDefaults.standard.set(data, forKey: key) }
+    }
+}
+
+private struct BlockEntry: Codable {
+    let blockedId: String
+    let createdAt: Date
 }

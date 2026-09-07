@@ -1,0 +1,109 @@
+{
+  "" : {
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar-primary.dia",
+    "emit-module-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar-primary-emit-module.dia",
+    "pch" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar-primary.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQBarButtonItem/IQBarButtonItem.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItem~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQBarButtonItem/IQBarButtonItemConfiguration.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQBarButtonItemConfiguration~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQBarButtonItem/IQInvocation.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQInvocation~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQBarButtonItem/IQTitleBarButtonItem.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQTitleBarButtonItem~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQKeyboardExtension/UIView+IQKeyboardExtension.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtension~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQKeyboardExtension/UIView+IQKeyboardExtensionDeprecated.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionDeprecated~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQKeyboardExtension/UIView+IQKeyboardExtensionObjc.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/UIView+IQKeyboardExtensionObjc~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/IQKeyboardToolbar.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbar~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Classes/Placeholder/IQKeyboardToolbarPlaceholderConfiguration.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQKeyboardToolbarPlaceholderConfiguration~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQKeyboardToolbar/IQKeyboardToolbar/Placeholderable/IQPlaceholderable.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQKeyboardToolbar.build/Objects-normal/x86_64/IQPlaceholderable~partial.swiftmodule"
+  }
+}

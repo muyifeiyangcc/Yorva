@@ -11,45 +11,103 @@ import SnapKit
 final class ExploreViewController: BaseViewController {
 
     override var pageBackgroundColor: UIColor { AppTheme.bgRoot }
-    private let tableView = UITableView(frame: .zero, style: .insetGrouped)
+    private let brandLabel = UILabel()
+    private let profileAvatar = AvatarView()
+    private let tableView = UITableView(frame: .zero, style: .plain)
+    private let introHeader = ExploreIntroHeaderView()
+    private let introHeaderContainer = UIView()
+    private var posts: [Post] = []
+    private var featuredFreePrompt: PromptItem?
+    private var featuredPaidPrompt: PromptItem?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Explore"
-        setupHierarchy()
-        applyAutoLayoutConstraints()
-        bindData()
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func setupHierarchy() {
+        brandLabel.text = "yorva"
+        brandLabel.font = .systemFont(ofSize: 23, weight: .bold)
+        brandLabel.textColor = AppTheme.ink
+        profileAvatar.configure(user: AccountManager.shared.currentUser)
+        profileAvatar.isUserInteractionEnabled = true
+        profileAvatar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openProfile)))
+
+        introHeader.onSelectTheme = { [weak self] theme in
+            let controller = ThemeDetailViewController()
+            controller.themeId = theme.id
+            self?.navigationController?.pushViewController(controller, animated: true)
+        }
+
         tableView.backgroundColor = .clear
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorStyle = .none
-        tableView.estimatedRowHeight = 220
+        tableView.showsVerticalScrollIndicator = false
+        tableView.estimatedRowHeight = 300
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.register(ThemeCardCell.self, forCellReuseIdentifier: ThemeCardCell.reuseIdentifier)
-        tableView.register(PromptLibraryCell.self, forCellReuseIdentifier: PromptLibraryCell.reuseIdentifier)
-        tableView.register(PeopleToNoticeCell.self, forCellReuseIdentifier: PeopleToNoticeCell.reuseIdentifier)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 92, right: 0)
+        tableView.register(ThemeBrowseCell.self, forCellReuseIdentifier: ThemeBrowseCell.reuseIdentifier)
+        tableView.register(HomePromptShowcaseCell.self, forCellReuseIdentifier: HomePromptShowcaseCell.reuseIdentifier)
+        tableView.register(PostCardCell.self, forCellReuseIdentifier: PostCardCell.reuseIdentifier)
         tableView.register(SectionHeaderCell.self, forCellReuseIdentifier: SectionHeaderCell.reuseIdentifier)
-        view.addSubview(tableView)
+        introHeaderContainer.backgroundColor = .clear
+        introHeaderContainer.addSubview(introHeader)
+        introHeader.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        tableView.tableHeaderView = introHeaderContainer
+        [brandLabel, profileAvatar, tableView].forEach { view.addSubview($0) }
     }
 
     override func applyAutoLayoutConstraints() {
+        brandLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.left.equalToSuperview().offset(19)
+            make.height.equalTo(34)
+        }
+        profileAvatar.snp.makeConstraints { make in
+            make.centerY.equalTo(brandLabel)
+            make.right.equalToSuperview().inset(19)
+            make.size.equalTo(34)
+        }
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(brandLabel.snp.bottom).offset(8)
             make.left.right.bottom.equalToSuperview()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let width = tableView.bounds.width
+        guard width > 0 else { return }
+        let targetFrame = CGRect(x: 0, y: 0, width: width, height: introHeader.requiredHeight(for: width))
+        if introHeaderContainer.frame != targetFrame {
+            introHeaderContainer.frame = targetFrame
+            introHeader.frame = introHeaderContainer.bounds
+            tableView.tableHeaderView = introHeaderContainer
         }
     }
 
     override func bindData() {
         subscribeDataEvents { [weak self] event in
             switch event {
-            case .followChanged, .blockListChanged, .postsUpdated:
+            case .followChanged, .blockListChanged, .postsUpdated, .postInteracted, .profileUpdated:
                 self?.tableView.reloadData()
             default: break
             }
         }
+    }
+
+    override func refreshData() {
+        profileAvatar.configure(user: AccountManager.shared.currentUser)
+        if featuredFreePrompt == nil {
+            featuredFreePrompt = ContentManager.shared.freePrompts().randomElement()
+        }
+        if featuredPaidPrompt == nil {
+            featuredPaidPrompt = ContentManager.shared.paidPrompts().randomElement()
+        }
+        // Explore owns its full post list; do not discard the newest item created on the Home tab.
+        posts = ContentManager.shared.forYouPosts()
+        tableView.reloadData()
     }
 }
 
@@ -59,16 +117,16 @@ extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return ContentManager.shared.themes.count
-        case 1: return 1   // Prompt library 横向滚动卡
-        case 2: return DataRepository.shared.users.count
+        case 0: return 1
+        case 1: return 1
+        case 2: return posts.count
         default: return 0
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = tableView.dequeueReusableCell(withIdentifier: SectionHeaderCell.reuseIdentifier) as! SectionHeaderCell
-        let titles = ["Browse by theme", "Prompt library", "People to notice"]
+        let titles = ["Browse by theme", "Prompt library", "Worth a closer look"]
         cell.configure(title: titles[section])
         return cell
     }
@@ -77,28 +135,31 @@ extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: ThemeCardCell.reuseIdentifier, for: indexPath) as! ThemeCardCell
-            cell.configure(theme: ContentManager.shared.themes[indexPath.row])
+            let cell = tableView.dequeueReusableCell(withIdentifier: ThemeBrowseCell.reuseIdentifier, for: indexPath) as! ThemeBrowseCell
+            cell.configure(themes: ContentManager.shared.themes)
+            cell.onSelectTheme = { [weak self] theme in
+                let controller = ThemeDetailViewController()
+                controller.themeId = theme.id
+                self?.navigationController?.pushViewController(controller, animated: true)
+            }
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: PromptLibraryCell.reuseIdentifier, for: indexPath) as! PromptLibraryCell
-            cell.configure(prompts: ContentManager.shared.prompts)
-            cell.onUsePrompt = { [weak self] prompt in
+            let cell = tableView.dequeueReusableCell(withIdentifier: HomePromptShowcaseCell.reuseIdentifier, for: indexPath) as! HomePromptShowcaseCell
+            cell.configure(freePrompt: featuredFreePrompt, paidPrompt: featuredPaidPrompt)
+            cell.onUseFreePrompt = { [weak self] in
+                guard let prompt = self?.featuredFreePrompt else { return }
+                self?.handleUsePrompt(prompt)
+            }
+            cell.onUsePaidPrompt = { [weak self] in
+                guard let prompt = self?.featuredPaidPrompt else { return }
                 self?.handleUsePrompt(prompt)
             }
             return cell
         case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: PeopleToNoticeCell.reuseIdentifier, for: indexPath) as! PeopleToNoticeCell
-            let user = DataRepository.shared.users[indexPath.row]
-            cell.configure(user: user)
-            cell.onFollow = { [weak self] in
-                guard let me = AccountManager.shared.currentUser?.id else { return }
-                if FollowManager.shared.isFollowing(followerId: me, followeeId: user.id) {
-                    FollowManager.shared.unfollow(followerId: me, followeeId: user.id)
-                } else {
-                    FollowManager.shared.follow(followerId: me, followeeId: user.id)
-                }
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: PostCardCell.reuseIdentifier, for: indexPath) as! PostCardCell
+            let post = posts[indexPath.row]
+            cell.configure(post: post, author: DataRepository.shared.user(by: post.authorId))
+            cell.delegate = self
             return cell
         default: return UITableViewCell()
         }
@@ -106,15 +167,15 @@ extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard indexPath.section == 0 else { return }
-        let vc = ThemeDetailViewController()
-        vc.themeId = ContentManager.shared.themes[indexPath.row].id
-        navigationController?.pushViewController(vc, animated: true)
+        guard indexPath.section == 2, posts.indices.contains(indexPath.row) else { return }
+        let controller = PostDetailViewController()
+        controller.postId = posts[indexPath.row].id
+        navigationController?.pushViewController(controller, animated: true)
     }
 
     // 铁律 6：付费 Prompt 校验余额 + 扣费确认弹窗；免费直接进入填写页
     private func handleUsePrompt(_ prompt: PromptItem) {
-        guard let me = AccountManager.shared.currentUser, !AccountManager.shared.isGuest else {
+        guard AccountManager.shared.currentUser != nil, !AccountManager.shared.isGuest else {
             // 游客态拦截（铁律 2）
             (tabBarController as? MainTabBarController)?.requiresLoginIfNeeded()
             return
@@ -145,6 +206,210 @@ extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+extension ExploreViewController: PostCardCellDelegate {
+    private func post(for cell: PostCardCell) -> Post? {
+        guard let indexPath = tableView.indexPath(for: cell), posts.indices.contains(indexPath.row) else { return nil }
+        return posts[indexPath.row]
+    }
+
+    func postCardDidTapAuthor(_ cell: PostCardCell) {
+        guard let post = post(for: cell), let user = DataRepository.shared.user(by: post.authorId) else { return }
+        let controller = AuthorProfileViewController()
+        controller.author = user
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    func postCardDidTapMore(_ cell: PostCardCell) { if let post = post(for: cell) { MoreMenu.showPostMoreMenu(post: post, from: self) } }
+    func postCardDidTapLike(_ cell: PostCardCell) { if let post = post(for: cell) { ContentManager.shared.toggleLike(postId: post.id) } }
+    func postCardDidTapComment(_ cell: PostCardCell) {
+        guard let post = post(for: cell) else { return }
+        let controller = PostDetailViewController()
+        controller.postId = post.id
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    func postCardDidTapSave(_ cell: PostCardCell) { if let post = post(for: cell) { ContentManager.shared.toggleSave(postId: post.id) } }
+
+    /// 右上角头像：跳转个人页（Me），与首页行为一致
+    @objc private func openProfile() {
+        if AccountManager.shared.isGuest {
+            (tabBarController as? MainTabBarController)?.requiresLoginIfNeeded()
+            return
+        }
+        (tabBarController as? MainTabBarController)?.switchToTab(3)
+    }
+    func postCardDidTapPost(_ cell: PostCardCell) { postCardDidTapComment(cell) }
+}
+
+private final class ExploreIntroHeaderView: UIView {
+    var onSelectTheme: ((ThemeItem) -> Void)?
+    private let titleLabel = UILabel()
+    private let subtitleLabel = UILabel()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.lineSpacing = -5
+        titleLabel.attributedText = NSAttributedString(string: "Look around.\nKeep what fits.", attributes: [
+            .font: UIFont.systemFont(ofSize: 36, weight: .bold),
+            .foregroundColor: AppTheme.ink,
+            .paragraphStyle: paragraph
+        ])
+        // Measure both lines from the current width instead of clipping to a
+        // fixed frame height.
+        titleLabel.numberOfLines = 0
+        titleLabel.lineBreakMode = .byWordWrapping
+        subtitleLabel.text = "A considered way into people, ideas and everyday rituals."
+        subtitleLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        subtitleLabel.textColor = UIColor(hex: 0x7C7E77)
+        subtitleLabel.numberOfLines = 0
+        subtitleLabel.lineBreakMode = .byWordWrapping
+        addSubview(titleLabel)
+        addSubview(subtitleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(8)
+            make.left.right.equalToSuperview().inset(17)
+        }
+        subtitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(7)
+            make.left.right.equalTo(titleLabel)
+        }
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    func requiredHeight(for width: CGFloat) -> CGFloat {
+        let textWidth = max(0, width - 34)
+        titleLabel.preferredMaxLayoutWidth = textWidth
+        subtitleLabel.preferredMaxLayoutWidth = textWidth
+        let titleHeight = titleLabel.sizeThatFits(
+            CGSize(width: textWidth, height: .greatestFiniteMagnitude)
+        ).height
+        let subtitleHeight = subtitleLabel.sizeThatFits(
+            CGSize(width: textWidth, height: .greatestFiniteMagnitude)
+        ).height
+        return ceil(8 + titleHeight + 7 + subtitleHeight + 16)
+    }
+}
+
+private final class ThemeBrowseCell: UITableViewCell {
+    static let reuseIdentifier = "ThemeBrowseCell"
+    var onSelectTheme: ((ThemeItem) -> Void)?
+    private let rowsStack = UIStackView()
+
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        backgroundColor = .clear
+        contentView.backgroundColor = .clear
+        rowsStack.axis = .vertical
+        rowsStack.spacing = 10
+        rowsStack.distribution = .fillEqually
+        contentView.addSubview(rowsStack)
+        rowsStack.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(17)
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview().inset(8)
+            make.height.equalTo(264)
+        }
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    func configure(themes: [ThemeItem]) {
+        rowsStack.arrangedSubviews.forEach {
+            rowsStack.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        let items = Array(themes.prefix(4))
+        for chunk in stride(from: 0, to: items.count, by: 2) {
+            let row = UIStackView()
+            row.axis = .horizontal
+            row.spacing = 10
+            row.distribution = .fillEqually
+            for theme in items[chunk..<min(chunk + 2, items.count)] {
+                let card = ThemeBrowseCardView()
+                card.configure(theme: theme)
+                card.onTap = { [weak self] in self?.onSelectTheme?(theme) }
+                row.addArrangedSubview(card)
+            }
+            if row.arrangedSubviews.count == 1 {
+                row.addArrangedSubview(UIView())
+            }
+            rowsStack.addArrangedSubview(row)
+        }
+    }
+}
+
+private final class ThemeBrowseCardView: UIView {
+    var onTap: (() -> Void)?
+    private let imageView = UIImageView()
+    private let shadeLayer = CAGradientLayer()
+    private let titleLabel = UILabel()
+    private let descLabel = UILabel()
+    private let tapButton = UIButton(type: .custom)
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        layer.cornerRadius = 18
+        layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        addSubview(imageView)
+        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        shadeLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.62).cgColor]
+        shadeLayer.locations = [0.35, 1]
+        layer.addSublayer(shadeLayer)
+        titleLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        titleLabel.textColor = .white
+        descLabel.font = .systemFont(ofSize: 10, weight: .regular)
+        descLabel.textColor = UIColor.white.withAlphaComponent(0.9)
+        [titleLabel, descLabel, tapButton].forEach { addSubview($0) }
+        titleLabel.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(14)
+            make.bottom.equalTo(descLabel.snp.top).offset(-3)
+        }
+        descLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(titleLabel)
+            make.bottom.equalToSuperview().inset(12)
+        }
+        tapButton.snp.makeConstraints { $0.edges.equalToSuperview() }
+        tapButton.addAction(UIAction { [weak self] _ in self?.onTap?() }, for: .touchUpInside)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        shadeLayer.frame = bounds
+        shadeLayer.cornerRadius = layer.cornerRadius
+    }
+
+    func configure(theme: ThemeItem) {
+        let assetName: String
+        switch theme.id {
+        case "theme-keep": assetName = "Section1"
+        case "theme-habits": assetName = "Section"
+        case "theme-letgo": assetName = "Section2"
+        case "theme-lesstech": assetName = "Section3"
+        default: assetName = "Section"
+        }
+        imageView.image = UIImage(named: assetName)
+        imageView.backgroundColor = theme.coverColor
+        titleLabel.text = theme.title
+        descLabel.text = browseDescription(for: theme)
+    }
+
+    private func browseDescription(for theme: ThemeItem) -> String {
+        switch theme.id {
+        case "theme-keep": return "What earns its place"
+        case "theme-habits": return "Make days lighter"
+        case "theme-letgo": return "Release with care"
+        case "theme-lesstech": return "Make room offline"
+        default: return theme.desc
+        }
+    }
+}
+
 // MARK: - Cells
 
 final class SectionHeaderCell: UITableViewCell {
@@ -154,8 +419,8 @@ final class SectionHeaderCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         backgroundColor = .clear
-        label.font = AppFont.section()
-        label.textColor = AppTheme.olive
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.textColor = AppTheme.ink
         contentView.addSubview(label)
         label.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(16)

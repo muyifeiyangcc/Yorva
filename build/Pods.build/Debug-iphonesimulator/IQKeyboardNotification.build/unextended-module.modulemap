@@ -1,0 +1,10 @@
+framework module IQKeyboardNotification {
+  umbrella header "IQKeyboardNotification-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module IQKeyboardNotification.__Swift {
+  exclude header "IQKeyboardNotification-Swift.h"
+}

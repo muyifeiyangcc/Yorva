@@ -19,7 +19,7 @@ protocol StoreKitManagerDelegate: AnyObject {
     func storeKitPurchaseStateChanged(_ isPurchasing: Bool)
 }
 
-final class StoreKitManager: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelegate {
+final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObserver, SKProductsRequestDelegate {
 
     static let shared = StoreKitManager()
 
@@ -55,24 +55,24 @@ final class StoreKitManager: NSObject, SKPaymentTransactionObserver, SKProductsR
         "dxismgcwewhrtezo": 1.99,
         "khtxlcejaxmqcsra": 4.99,
         "yadwwvxspgxwlndb": 9.99,
-        "qnrcuelbtiuflyky": 19.99,
-        "ymohxnvpkqxutvab": 49.99
+        "qnrcuelbtiuflyky": 12.99,
+        "ymohxnvpkqxutvab": 19.99
     ]
     private static let testCoinMap: [String: Int] = [
-        "lvbsvhxcgcrvesor": 60,
-        "dxismgcwewhrtezo": 130,
-        "khtxlcejaxmqcsra": 330,
-        "yadwwvxspgxwlndb": 680,
-        "qnrcuelbtiuflyky": 1400,
-        "ymohxnvpkqxutvab": 3500
+        "lvbsvhxcgcrvesor": 400,
+        "dxismgcwewhrtezo": 800,
+        "khtxlcejaxmqcsra": 2450,
+        "yadwwvxspgxwlndb": 5150,
+        "qnrcuelbtiuflyky": 6400,
+        "ymohxnvpkqxutvab": 10800
     ]
     private static let testTitleMap: [String: String] = [
-        "lvbsvhxcgcrvesor": "60 Coins",
-        "dxismgcwewhrtezo": "130 Coins",
-        "khtxlcejaxmqcsra": "330 Coins",
-        "yadwwvxspgxwlndb": "680 Coins",
-        "qnrcuelbtiuflyky": "1,400 Coins",
-        "ymohxnvpkqxutvab": "3,500 Coins"
+        "lvbsvhxcgcrvesor": "400 Coins",
+        "dxismgcwewhrtezo": "800 Coins",
+        "khtxlcejaxmqcsra": "2,450 Coins",
+        "yadwwvxspgxwlndb": "5,150 Coins",
+        "qnrcuelbtiuflyky": "6,400 Coins",
+        "ymohxnvpkqxutvab": "10,800 Coins"
     ]
 
     // 正式环境预置（10 个）价格 / 数额占位，正式上架时由 SKProduct 回填
@@ -81,24 +81,36 @@ final class StoreKitManager: NSObject, SKPaymentTransactionObserver, SKProductsR
         "yorva.prod.coin.medium": 1.99,
         "yorva.prod.coin.large": 4.99,
         "yorva.prod.coin.xlarge": 9.99,
-        "yorva.prod.coin.mega": 19.99,
-        "yorva.prod.diamond.small": 0.99,
-        "yorva.prod.diamond.medium": 4.99,
-        "yorva.prod.diamond.large": 9.99,
-        "yorva.prod.diamond.xlarge": 19.99,
-        "yorva.prod.bundle.value": 49.99
+        "yorva.prod.coin.mega": 12.99,
+        "yorva.prod.diamond.small": 19.99,
+        "yorva.prod.diamond.medium": 24.99,
+        "yorva.prod.diamond.large": 49.99,
+        "yorva.prod.diamond.xlarge": 79.99,
+        "yorva.prod.bundle.value": 99.99
     ]
     private static let prodCoinMap: [String: Int] = [
-        "yorva.prod.coin.small": 60,
-        "yorva.prod.coin.medium": 130,
-        "yorva.prod.coin.large": 330,
-        "yorva.prod.coin.xlarge": 680,
-        "yorva.prod.coin.mega": 1400,
-        "yorva.prod.diamond.small": 3,
-        "yorva.prod.diamond.medium": 18,
-        "yorva.prod.diamond.large": 38,
-        "yorva.prod.diamond.xlarge": 75,
-        "yorva.prod.bundle.value": 5000
+        "yorva.prod.coin.small": 400,
+        "yorva.prod.coin.medium": 800,
+        "yorva.prod.coin.large": 2450,
+        "yorva.prod.coin.xlarge": 5150,
+        "yorva.prod.coin.mega": 6400,
+        "yorva.prod.diamond.small": 10800,
+        "yorva.prod.diamond.medium": 14900,
+        "yorva.prod.diamond.large": 29400,
+        "yorva.prod.diamond.xlarge": 39500,
+        "yorva.prod.bundle.value": 63700
+    ]
+    private static let prodTitleMap: [String: String] = [
+        "yorva.prod.coin.small": "400 Coins",
+        "yorva.prod.coin.medium": "800 Coins",
+        "yorva.prod.coin.large": "2,450 Coins",
+        "yorva.prod.coin.xlarge": "5,150 Coins",
+        "yorva.prod.coin.mega": "6,400 Coins",
+        "yorva.prod.diamond.small": "10,800 Coins",
+        "yorva.prod.diamond.medium": "14,900 Coins",
+        "yorva.prod.diamond.large": "29,400 Coins",
+        "yorva.prod.diamond.xlarge": "39,500 Coins",
+        "yorva.prod.bundle.value": "63,700 Coins"
     ]
 
     // 运行时有效 ProductId 列表（按 Bundle ID 自动判定环境，避免硬编码商品条目）
@@ -132,7 +144,7 @@ final class StoreKitManager: NSObject, SKPaymentTransactionObserver, SKProductsR
         let ids = isTestEnvironment ? Self.testProductIds : Self.prodProductIds
         let priceMap = isTestEnvironment ? Self.testPriceMap : Self.prodPriceMap
         let coinMap = isTestEnvironment ? Self.testCoinMap : Self.prodCoinMap
-        let titleMap = isTestEnvironment ? Self.testTitleMap : [:] as [String: String]
+        let titleMap = isTestEnvironment ? Self.testTitleMap : Self.prodTitleMap
         return ids.map { id in
             WalletProduct(
                 productId: id,
@@ -150,10 +162,12 @@ final class StoreKitManager: NSObject, SKPaymentTransactionObserver, SKProductsR
         var list: [WalletProduct] = []
         let priceMap = isTestEnvironment ? Self.testPriceMap : Self.prodPriceMap
         let coinMap = isTestEnvironment ? Self.testCoinMap : Self.prodCoinMap
-        let titleMap = isTestEnvironment ? Self.testTitleMap : [:] as [String: String]
+        let titleMap = isTestEnvironment ? Self.testTitleMap : Self.prodTitleMap
         for product in response.products {
             // 价格统一固定展示美元标价，不读取 SKProduct.priceLocale
-            let usd = priceMap[product.productIdentifier] ?? Double(truncating: product.price)
+            // Keep presentation in USD even when the App Store account locale differs.
+            // Product identity is the source of truth for this fixed catalog.
+            let usd = priceMap[product.productIdentifier] ?? 0.99
             list.append(WalletProduct(
                 productId: product.productIdentifier,
                 coinsAmount: coinMap[product.productIdentifier] ?? 0,

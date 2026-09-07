@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification-primary.dia",
+    "emit-module-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification-primary-emit-module.dia",
+    "pch" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification-primary.swiftdeps"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQTextInputViewNotification/IQTextInputViewNotification/Classes/IQTextInputViewInfo.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewInfo~partial.swiftmodule"
+  },
+  "/Users/myfy/Desktop/code/Yorva/Yorva/Pods/IQTextInputViewNotification/IQTextInputViewNotification/Classes/IQTextInputViewNotification.swift" : {
+    "const-values" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.swiftconstvalues",
+    "dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.d",
+    "diagnostics" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.o",
+    "llvm-bc" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.bc",
+    "object" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.o",
+    "swift-dependencies" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification.swiftdeps",
+    "swiftmodule" : "/Users/myfy/Desktop/code/Yorva/Yorva/build/Pods.build/Debug-iphonesimulator/IQTextInputViewNotification.build/Objects-normal/x86_64/IQTextInputViewNotification~partial.swiftmodule"
+  }
+}

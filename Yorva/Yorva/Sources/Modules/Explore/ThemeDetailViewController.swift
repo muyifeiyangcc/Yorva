@@ -14,7 +14,10 @@ final class ThemeDetailViewController: BaseViewController {
     override var pageBackgroundColor: UIColor { AppTheme.bgRoot }
     override var isSecondaryLevel: Bool { true }
 
-    private let headerImage = UIView()
+    private let headerImage = UIImageView()
+    private let headerShade = UIView()
+    private let backButton = UIButton(type: .system)
+    private let eyebrowLabel = UILabel()
     private let titleLabel = UILabel()
     private let descLabel = UILabel()
     private let sectionLabel = UILabel()
@@ -24,23 +27,27 @@ final class ThemeDetailViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Theme"
-        setupHierarchy()
-        applyAutoLayoutConstraints()
-        bindData()
-        refreshData()
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func setupHierarchy() {
-        headerImage.layer.cornerRadius = 16
-        headerImage.layer.masksToBounds = true
-        titleLabel.font = AppFont.cardTitleSemibold()
-        titleLabel.textColor = AppTheme.ink
-        descLabel.font = AppFont.bodySecondary()
-        descLabel.textColor = AppTheme.textSecondary
+        headerImage.contentMode = .scaleAspectFill
+        headerImage.clipsToBounds = true
+        headerShade.backgroundColor = UIColor.black.withAlphaComponent(0.28)
+        backButton.setImage(UIImage(systemName: "chevron.backward")?.withTintColor(AppTheme.ink, renderingMode: .alwaysOriginal), for: .normal)
+        backButton.backgroundColor = UIColor.white.withAlphaComponent(0.88)
+        backButton.layer.cornerRadius = 18
+        backButton.addAction(UIAction { [weak self] _ in self?.navigationController?.popViewController(animated: true) }, for: .touchUpInside)
+        eyebrowLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        eyebrowLabel.textColor = UIColor.white.withAlphaComponent(0.9)
+        eyebrowLabel.attributedText = NSAttributedString(string: "THEME / REFLECTION", attributes: [.kern: 1.4])
+        titleLabel.font = .systemFont(ofSize: 34, weight: .bold)
+        titleLabel.textColor = .white
+        descLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        descLabel.textColor = UIColor.white.withAlphaComponent(0.88)
         descLabel.numberOfLines = 0
-        sectionLabel.font = AppFont.section()
-        sectionLabel.textColor = AppTheme.olive
+        sectionLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        sectionLabel.textColor = AppTheme.ink
         sectionLabel.text = "Worth a closer look"
 
         tableView.backgroundColor = .clear
@@ -50,28 +57,43 @@ final class ThemeDetailViewController: BaseViewController {
         tableView.register(PostCardCell.self, forCellReuseIdentifier: PostCardCell.reuseIdentifier)
         tableView.estimatedRowHeight = 320
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.isScrollEnabled = false
+        tableView.isScrollEnabled = true
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 92, right: 0)
 
-        [headerImage, titleLabel, descLabel, sectionLabel, tableView].forEach { view.addSubview($0) }
+        [headerImage, headerShade, backButton, eyebrowLabel, titleLabel, descLabel, sectionLabel, tableView].forEach { view.addSubview($0) }
     }
 
     override func applyAutoLayoutConstraints() {
         headerImage.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.left.right.equalToSuperview().inset(16)
-            make.height.equalTo(180)
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(206)
+        }
+        headerShade.snp.makeConstraints { make in
+            make.edges.equalTo(headerImage)
+        }
+        backButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(8)
+            make.left.equalToSuperview().offset(16)
+            make.size.equalTo(36)
+        }
+        eyebrowLabel.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(19)
+            make.bottom.equalTo(titleLabel.snp.top).offset(-4)
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(headerImage.snp.bottom).offset(12)
-            make.left.right.equalToSuperview().inset(16)
+            make.left.right.equalToSuperview().inset(19)
+            make.bottom.equalTo(descLabel.snp.top).offset(-4)
         }
         descLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.left.right.equalToSuperview().inset(16)
+            make.left.right.equalTo(titleLabel)
+            make.bottom.equalTo(headerImage.snp.bottom).offset(-16)
+        }
+        titleLabel.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(40)
         }
         sectionLabel.snp.makeConstraints { make in
-            make.top.equalTo(descLabel.snp.bottom).offset(16)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(headerImage.snp.bottom).offset(18)
+            make.left.right.equalToSuperview().inset(17)
         }
         tableView.snp.makeConstraints { make in
             make.top.equalTo(sectionLabel.snp.bottom).offset(8)
@@ -91,9 +113,18 @@ final class ThemeDetailViewController: BaseViewController {
 
     override func refreshData() {
         guard let id = themeId, let theme = ContentManager.shared.theme(by: id) else { return }
+        let assetName: String
+        switch theme.id {
+        case "theme-keep": assetName = "Section1"
+        case "theme-habits": assetName = "Section"
+        case "theme-letgo": assetName = "Section2"
+        case "theme-lesstech": assetName = "Section3"
+        default: assetName = "Section"
+        }
+        headerImage.image = UIImage(named: assetName)
         headerImage.backgroundColor = theme.coverColor
         titleLabel.text = theme.title
-        descLabel.text = theme.desc
+        descLabel.text = detailDescription(for: theme)
         posts = ContentManager.shared.themePosts(themeId: id)
         if posts.isEmpty {
             loadingView.state = .empty(title: "No posts for this theme yet",
@@ -103,8 +134,17 @@ final class ThemeDetailViewController: BaseViewController {
             loadingView.hide()
         }
         tableView.reloadData()
-        // 内容超出时允许纵向滚动：包裹 ScrollView 已在 BaseViewController 中支持，但本页采用 tableView
-        // tableView 默认即纵向滚动；当超出屏幕时自动滚动（铁律：滚动容错）
+        // 内容超出时允许纵向滚动：tableView 默认即纵向滚动；当超出屏幕时自动滚动（铁律：滚动容错）
+    }
+
+    private func detailDescription(for theme: ThemeItem) -> String {
+        switch theme.id {
+        case "theme-keep": return "What earns its place in a lighter life."
+        case "theme-habits": return "Small choices that make days lighter."
+        case "theme-letgo": return "Release what no longer serves you."
+        case "theme-lesstech": return "Make room for life offline."
+        default: return theme.desc
+        }
     }
 }
 

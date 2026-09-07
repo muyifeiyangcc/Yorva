@@ -2,8 +2,7 @@
 //  ConfirmDialog.swift
 //  Yorva
 //
-//  通用确认弹窗（铁律 6 金币/钻石扣费确认 / 删除账号二次确认 / 拉黑二次确认）
-//  - 白底卡片 + 40% 黑遮罩，符合 ios-design-spec 弹层背景
+//  全局统一的自定义确认弹窗：动态高度、双按钮、品牌色样式。
 //
 
 import UIKit
@@ -11,15 +10,6 @@ import SnapKit
 
 final class ConfirmDialog {
 
-    /// 简化显示入口
-    /// - Parameters:
-    ///   - title: 标题
-    ///   - message: 描述（如本次消耗数额 / 删除账号不可恢复）
-    ///   - confirmTitle: 确认按钮文字
-    ///   - cancelTitle: 取消按钮文字
-    ///   - isDestructive: 是否破坏性操作（按钮文字变红）
-    ///   - onConfirm: 确认回调
-    ///   - onCancel: 取消回调
     static func show(title: String,
                      message: String,
                      confirmTitle: String = "Confirm",
@@ -27,86 +17,76 @@ final class ConfirmDialog {
                      isDestructive: Bool = false,
                      onConfirm: @escaping () -> Void,
                      onCancel: (() -> Void)? = nil) {
-        guard let host = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.keyWindow else { return }
+        guard let host = UIApplication.shared.activeKeyWindow else { return }
 
         let overlay = UIView()
         overlay.backgroundColor = AppTheme.overlay
         host.addSubview(overlay)
-        overlay.snp.makeConstraints { $0.edges.equalToSuperview() }
+        overlay.snp.makeConstraints { make in make.edges.equalToSuperview() }
 
         let card = UIView()
-        card.backgroundColor = AppTheme.bgPrimary
-        card.layer.cornerRadius = 16
+        card.backgroundColor = UIColor(hex: 0xFAF9F3)
+        card.layer.cornerRadius = 26
         card.layer.masksToBounds = true
         overlay.addSubview(card)
         card.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.width.equalTo(280)
+            make.left.right.equalToSuperview().inset(19)
+            make.width.lessThanOrEqualTo(468)
         }
 
         let titleLabel = UILabel()
-        titleLabel.font = AppFont.navTitle()
-        titleLabel.textColor = AppTheme.ink
         titleLabel.text = title
+        titleLabel.font = .systemFont(ofSize: 26, weight: .bold)
+        titleLabel.textColor = AppTheme.ink
         titleLabel.textAlignment = .center
+        titleLabel.numberOfLines = 0
 
         let messageLabel = UILabel()
-        messageLabel.font = AppFont.body()
-        messageLabel.textColor = AppTheme.textSecondary
-        messageLabel.numberOfLines = 0
-        messageLabel.textAlignment = .center
         messageLabel.text = message
-
-        let divider = UIView(); divider.backgroundColor = AppTheme.divider
+        messageLabel.font = .systemFont(ofSize: 16, weight: .regular)
+        messageLabel.textColor = UIColor(hex: 0x7B7E77)
+        messageLabel.textAlignment = .center
+        messageLabel.numberOfLines = 0
 
         let cancelButton = UIButton(type: .system)
         cancelButton.setTitle(cancelTitle, for: .normal)
-        cancelButton.setTitleColor(AppTheme.textSecondary, for: .normal)
-        cancelButton.titleLabel?.font = AppFont.buttonSecondary()
-        cancelButton.tag = 0
+        cancelButton.setTitleColor(AppTheme.ink, for: .normal)
+        cancelButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        cancelButton.backgroundColor = UIColor(hex: 0xEEF0E9)
+        cancelButton.layer.cornerRadius = 15
 
         let confirmButton = UIButton(type: .system)
         confirmButton.setTitle(confirmTitle, for: .normal)
-        confirmButton.titleLabel?.font = AppFont.buttonPrimary()
-        confirmButton.setTitleColor(isDestructive ? AppTheme.error : AppTheme.primary, for: .normal)
-        confirmButton.tag = 1
+        // The confirmation action always uses the app's black ink color,
+        // including destructive flows; destructive styling is conveyed by
+        // the action copy and confirmation step rather than red text.
+        confirmButton.setTitleColor(AppTheme.ink, for: .normal)
+        confirmButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        confirmButton.backgroundColor = UIColor(hex: 0xD9FF3F)
+        confirmButton.layer.cornerRadius = 15
 
-        let vDivider = UIView(); vDivider.backgroundColor = AppTheme.divider
+        let buttonsStack = UIStackView(arrangedSubviews: [cancelButton, confirmButton])
+        buttonsStack.axis = .horizontal
+        buttonsStack.spacing = 9
+        buttonsStack.distribution = .fillEqually
+        card.addSubview(titleLabel)
+        card.addSubview(messageLabel)
+        card.addSubview(buttonsStack)
 
-        [titleLabel, messageLabel, divider, cancelButton, vDivider, confirmButton].forEach { card.addSubview($0) }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalToSuperview().offset(38)
+            make.left.right.equalToSuperview().inset(20)
         }
         messageLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(10)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(titleLabel.snp.bottom).offset(12)
+            make.left.right.equalToSuperview().inset(20)
         }
-        divider.snp.makeConstraints { make in
-            make.top.equalTo(messageLabel.snp.bottom).offset(16)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(1)
-        }
-        cancelButton.snp.makeConstraints { make in
-            make.top.equalTo(divider.snp.bottom)
-            make.left.bottom.equalToSuperview()
-            make.height.equalTo(46)
-            make.width.equalTo(host).priority(.low)
-        }
-        vDivider.snp.makeConstraints { make in
-            make.top.equalTo(divider.snp.bottom)
-            make.bottom.equalToSuperview()
-            make.centerX.equalToSuperview()
-            make.width.equalTo(1)
-        }
-        confirmButton.snp.makeConstraints { make in
-            make.top.equalTo(divider.snp.bottom)
-            make.right.bottom.equalToSuperview()
-            make.height.equalTo(46)
-            make.left.equalTo(vDivider.snp.right)
-        }
-        cancelButton.snp.makeConstraints { make in
-            make.right.equalTo(vDivider.snp.left)
+        buttonsStack.snp.makeConstraints { make in
+            make.top.equalTo(messageLabel.snp.bottom).offset(24)
+            make.left.right.equalToSuperview().inset(18)
+            make.height.equalTo(45)
+            make.bottom.equalToSuperview().inset(16)
         }
 
         let close: (Bool) -> Void = { confirmed in
@@ -122,5 +102,18 @@ final class ConfirmDialog {
 
         overlay.alpha = 0
         UIView.animate(withDuration: 0.2) { overlay.alpha = 1 }
+    }
+
+    /// 金币不足弹窗：展示余额与所需金额，提供 Recharge 按钮进入充值页
+    static func showInsufficientCoins(needed: Int,
+                                      onRecharge: @escaping () -> Void) {
+        let balance = CurrencyManager.shared.coins
+        show(
+            title: "Not enough coins",
+            message: "You need \(needed) Coins but only have \(balance). Recharge to continue.",
+            confirmTitle: "Recharge",
+            cancelTitle: "Cancel",
+            onConfirm: onRecharge
+        )
     }
 }

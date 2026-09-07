@@ -1,0 +1,4 @@
+
+module IQKeyboardToolbar.__Swift {
+  exclude header "IQKeyboardToolbar-Swift.h"
+}

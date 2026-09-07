@@ -15,6 +15,7 @@ final class ProfileViewController: BaseViewController {
 
     override var pageBackgroundColor: UIColor { AppTheme.bgRoot }
 
+    private let brandLabel = UILabel()
     private let avatar = AvatarView()
     private let nameLabel = UILabel()
     private let bioLabel = UILabel()
@@ -24,7 +25,11 @@ final class ProfileViewController: BaseViewController {
     private let postsTitleLabel = UILabel()
     private let followersTitleLabel = UILabel()
     private let followingTitleLabel = UILabel()
+    private let postsStatCard = UIView()
+    private let followersStatCard = UIView()
+    private let followingStatCard = UIView()
     private let coinsBanner = UIView()
+    private let coinsBackgroundImageView = UIImageView()
     private let coinsLabel = UILabel()
     private let rechargeButton = UIButton(type: .system)
     private let editProfileButton = TextLinkButton(title: "Edit Profile")
@@ -35,27 +40,27 @@ final class ProfileViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Profile"
-        setupHierarchy()
-        applyAutoLayoutConstraints()
-        bindData()
-        refreshData()
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        refreshData()
     }
 
     override func setupHierarchy() {
+        brandLabel.text = "yorva"
+        brandLabel.font = .systemFont(ofSize: 23, weight: .bold)
+        brandLabel.textColor = AppTheme.ink
         avatar.configure(user: AccountManager.shared.currentUser)
+        avatar.isUserInteractionEnabled = true
+        avatar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openEditProfile)))
         nameLabel.font = AppFont.cardTitleSemibold()
         nameLabel.textColor = AppTheme.ink
         bioLabel.font = AppFont.bodySecondary()
         bioLabel.textColor = AppTheme.textSecondary
         bioLabel.numberOfLines = 0
 
-        for (label, title) in [(postsCountLabel, "Posts"), (followersCountLabel, "Followers"), (followingCountLabel, "Following")] {
+        for label in [postsCountLabel, followersCountLabel, followingCountLabel] {
             label.font = AppFont.statNumber()
             label.textColor = AppTheme.ink
             label.textAlignment = .center
@@ -66,46 +71,65 @@ final class ProfileViewController: BaseViewController {
             label.textAlignment = .center
             label.text = title
         }
-        for label in [followersCountLabel, followersTitleLabel] {
-            let tap = UITapGestureRecognizer(target: self, action: #selector(openFollowers))
-            label.addGestureRecognizer(tap); label.isUserInteractionEnabled = true
+        [postsStatCard, followersStatCard, followingStatCard].forEach {
+            $0.backgroundColor = .white
+            $0.layer.cornerRadius = 16
+            $0.layer.borderWidth = 1
+            $0.layer.borderColor = UIColor(hex: 0xE1E0D9).cgColor
         }
-        for label in [followingCountLabel, followingTitleLabel] {
-            let tap = UITapGestureRecognizer(target: self, action: #selector(openFollowing))
-            label.addGestureRecognizer(tap); label.isUserInteractionEnabled = true
+        followersStatCard.isUserInteractionEnabled = true
+        followersStatCard.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openFollowers)))
+        followingStatCard.isUserInteractionEnabled = true
+        followingStatCard.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openFollowing)))
+        for (card, count, title) in [(postsStatCard, postsCountLabel, postsTitleLabel),
+                                     (followersStatCard, followersCountLabel, followersTitleLabel),
+                                     (followingStatCard, followingCountLabel, followingTitleLabel)] {
+            card.addSubview(count)
+            card.addSubview(title)
+            count.snp.makeConstraints { make in
+                make.left.top.equalToSuperview().offset(12)
+            }
+            title.snp.makeConstraints { make in
+                make.left.equalTo(count)
+                make.top.equalTo(count.snp.bottom).offset(3)
+            }
         }
 
-        coinsBanner.backgroundColor = AppTheme.coinsBg
-        coinsBanner.layer.cornerRadius = 12
+        coinsBanner.backgroundColor = .clear
+        coinsBanner.layer.cornerRadius = 16
         coinsBanner.layer.masksToBounds = true
+        coinsBackgroundImageView.image = UIImage(named: "me_coin_bg")
+        coinsBackgroundImageView.contentMode = .scaleAspectFill
+        coinsBackgroundImageView.clipsToBounds = true
         let coinsTitle = UILabel()
-        coinsTitle.font = AppFont.captionStrong()
-        coinsTitle.textColor = AppTheme.textSecondary
-        coinsTitle.text = "Coins balance"
-        coinsLabel.font = AppFont.coinNumber()
-        coinsLabel.textColor = AppTheme.textCoins
-        rechargeButton.setTitle("Recharge", for: .normal)
-        rechargeButton.setTitleColor(AppTheme.textOnPrimary, for: .normal)
-        rechargeButton.titleLabel?.font = AppFont.buttonSecondary()
-        rechargeButton.backgroundColor = AppTheme.primary
-        rechargeButton.layer.cornerRadius = 18
-        rechargeButton.addAction(UIAction { [weak self] _ in
-            let vc = RechargeViewController()
-            self?.navigationController?.pushViewController(vc, animated: true)
-        }, for: .touchUpInside)
-        [coinsTitle, coinsLabel, rechargeButton].forEach { coinsBanner.addSubview($0) }
+        coinsTitle.font = .systemFont(ofSize: 9, weight: .regular)
+        coinsTitle.textColor = AppTheme.ink
+        coinsTitle.text = "COIN BALANCE"
+        coinsLabel.font = .monospacedDigitSystemFont(ofSize: 30, weight: .bold)
+        coinsLabel.textColor = AppTheme.ink
+        // Recharge 文案已包含在 me_coin_bg 切图中，按钮仅保留透明点击区域。
+        rechargeButton.setTitle(nil, for: .normal)
+        rechargeButton.backgroundColor = .clear
+        rechargeButton.isUserInteractionEnabled = false
+        coinsBanner.isUserInteractionEnabled = true
+        coinsBanner.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRecharge)))
+        [coinsBackgroundImageView, coinsTitle, coinsLabel, rechargeButton].forEach { coinsBanner.addSubview($0) }
+        coinsBackgroundImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         coinsTitle.snp.makeConstraints { make in
-            make.left.top.equalToSuperview().offset(12)
+            make.left.equalToSuperview().offset(79)
+            make.top.equalToSuperview().offset(25)
         }
         coinsLabel.snp.makeConstraints { make in
             make.left.equalTo(coinsTitle)
-            make.top.equalTo(coinsTitle.snp.bottom).offset(2)
+            make.top.equalTo(coinsTitle.snp.bottom).offset(3)
         }
         rechargeButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-12)
+            make.right.equalToSuperview().inset(8)
             make.centerY.equalToSuperview()
-            make.width.equalTo(110)
-            make.height.equalTo(36)
+            make.width.equalTo(120)
+            make.height.equalTo(58)
         }
 
         editProfileButton.addAction(UIAction { [weak self] _ in
@@ -113,16 +137,17 @@ final class ProfileViewController: BaseViewController {
             self?.navigationController?.pushViewController(vc, animated: true)
         }, for: .touchUpInside)
         settingsButton.setImage(UIImage(systemName: "gearshape")?.withTintColor(AppTheme.ink, renderingMode: .alwaysOriginal), for: .normal)
+        settingsButton.accessibilityLabel = "Settings"
         settingsButton.addAction(UIAction { [weak self] _ in
             let vc = SettingsViewController()
             self?.navigationController?.pushViewController(vc, animated: true)
         }, for: .touchUpInside)
 
         segment.selectedSegmentIndex = 0
-        segment.backgroundColor = AppTheme.bgPrimary
-        segment.selectedSegmentTintColor = AppTheme.cream
-        segment.setTitleTextAttributes([.font: AppFont.buttonSecondary(), .foregroundColor: AppTheme.stone], for: .normal)
-        segment.setTitleTextAttributes([.font: AppFont.buttonPrimary(), .foregroundColor: AppTheme.primary], for: .selected)
+        segment.backgroundColor = UIColor(hex: 0xE9E7D9)
+        segment.selectedSegmentTintColor = AppTheme.ink
+        segment.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12, weight: .regular), .foregroundColor: UIColor(hex: 0x85857D)], for: .normal)
+        segment.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12, weight: .medium), .foregroundColor: UIColor.white], for: .selected)
         segment.addAction(UIAction { [weak self] _ in self?.refreshData() }, for: .valueChanged)
 
         tableView.dataSource = self
@@ -132,62 +157,63 @@ final class ProfileViewController: BaseViewController {
         tableView.register(PostCardCell.self, forCellReuseIdentifier: PostCardCell.reuseIdentifier)
         tableView.estimatedRowHeight = 320
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 92, right: 0)
 
-        [avatar, nameLabel, bioLabel, postsCountLabel, postsTitleLabel,
-         followersCountLabel, followersTitleLabel, followingCountLabel, followingTitleLabel,
-         coinsBanner, editProfileButton, settingsButton, segment, tableView].forEach { view.addSubview($0) }
+        [brandLabel, settingsButton, avatar, nameLabel, bioLabel,
+         postsStatCard, followersStatCard, followingStatCard,
+         coinsBanner, segment, tableView].forEach { view.addSubview($0) }
     }
 
     override func applyAutoLayoutConstraints() {
+        brandLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
+            make.left.equalToSuperview().offset(19)
+            make.height.equalTo(34)
+        }
+        settingsButton.snp.makeConstraints { make in
+            make.centerY.equalTo(brandLabel)
+            make.right.equalToSuperview().inset(17)
+            make.size.equalTo(32)
+        }
         avatar.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(brandLabel.snp.bottom).offset(20)
             make.left.equalToSuperview().offset(16)
             make.size.equalTo(72)
         }
         nameLabel.snp.makeConstraints { make in
             make.left.equalTo(avatar.snp.right).offset(12)
             make.top.equalTo(avatar)
+            make.right.equalToSuperview().inset(17)
         }
         bioLabel.snp.makeConstraints { make in
             make.left.right.equalTo(nameLabel)
             make.top.equalTo(nameLabel.snp.bottom).offset(4)
         }
-        settingsButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-16)
-            make.centerY.equalTo(nameLabel)
-            make.size.equalTo(28)
-        }
-        // 三段统计
-        func statConstraints(_ count: UILabel, _ title: UILabel, prev: UIView?) {
-            count.snp.makeConstraints { make in
-                make.top.equalTo(bioLabel.snp.bottom).offset(16)
-                if let prev = prev { make.left.equalTo(prev.snp.right).offset(20) }
-                else { make.left.equalTo(avatar) }
-            }
-            title.snp.makeConstraints { make in
-                make.top.equalTo(count.snp.bottom).offset(2)
-                make.centerX.equalTo(count)
+        let statCards = [postsStatCard, followersStatCard, followingStatCard]
+        for (index, card) in statCards.enumerated() {
+            card.snp.makeConstraints { make in
+                make.top.equalTo(avatar.snp.bottom).offset(16)
+                make.bottom.equalTo(coinsBanner.snp.top).offset(-12)
+                make.height.equalTo(66)
+                make.width.equalTo(108)
+                if index == 0 {
+                    make.left.equalToSuperview().offset(17)
+                } else {
+                    make.left.equalTo(statCards[index - 1].snp.right).offset(8)
+                }
             }
         }
-        statConstraints(postsCountLabel, postsTitleLabel, prev: nil)
-        statConstraints(followersCountLabel, followersTitleLabel, prev: postsTitleLabel)
-        statConstraints(followingCountLabel, followingTitleLabel, prev: followersTitleLabel)
         coinsBanner.snp.makeConstraints { make in
-            make.top.equalTo(postsTitleLabel.snp.bottom).offset(16)
-            make.left.right.equalToSuperview().inset(16)
-            make.height.equalTo(80)
-        }
-        editProfileButton.snp.makeConstraints { make in
-            make.top.equalTo(coinsBanner.snp.bottom).offset(8)
-            make.centerX.equalToSuperview()
+            make.left.right.equalToSuperview().inset(17)
+            make.height.equalTo(114)
         }
         segment.snp.makeConstraints { make in
-            make.top.equalTo(editProfileButton.snp.bottom).offset(12)
-            make.left.right.equalToSuperview().inset(16)
-            make.height.equalTo(32)
+            make.top.equalTo(coinsBanner.snp.bottom).offset(18)
+            make.left.right.equalToSuperview().inset(17)
+            make.height.equalTo(36)
         }
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(segment.snp.bottom).offset(8)
+            make.top.equalTo(segment.snp.bottom).offset(20)
             make.left.right.bottom.equalToSuperview()
         }
     }
@@ -220,6 +246,17 @@ final class ProfileViewController: BaseViewController {
         let vc = FollowersViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
+
+    @objc private func openEditProfile() {
+        let vc = EditProfileViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    @objc private func openRecharge() {
+        let vc = RechargeViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
     @objc private func openFollowing() {
         let vc = FollowingViewController()
         navigationController?.pushViewController(vc, animated: true)

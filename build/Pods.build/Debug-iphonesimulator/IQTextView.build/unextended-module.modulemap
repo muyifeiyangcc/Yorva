@@ -1,0 +1,10 @@
+framework module IQTextView {
+  umbrella header "IQTextView-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module IQTextView.__Swift {
+  exclude header "IQTextView-Swift.h"
+}
