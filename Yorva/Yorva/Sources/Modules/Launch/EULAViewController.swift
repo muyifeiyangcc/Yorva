@@ -2,11 +2,6 @@
 //  EULAViewController.swift
 //  Yorva
 //
-//  EULA 首次启动弹窗（铁律 1）
-//  - App 首次启动自动弹出 EULA 界面
-//  - 点击「同意」：本地持久化记录同意状态，进入 App 主页，终身不再弹出
-//  - 点击「Cancel」：直接强制退出 App
-//  - 仅作为临时弹层，不改变导航层级（铁律 13）
 //
 
 import UIKit
@@ -46,9 +41,9 @@ final class EULAViewController: BaseViewController {
         body.font = .systemFont(ofSize: 12, weight: .regular)
         body.textColor = UIColor(hex: 0x7B7E77)
         body.numberOfLines = 0
-        body.textAlignment = .center
+        body.textAlignment = .justified
         let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .center
+        paragraph.alignment = .justified
         paragraph.lineSpacing = 2
         paragraph.paragraphSpacing = 8
         let bodyText = """
@@ -89,7 +84,7 @@ final class EULAViewController: BaseViewController {
         agree.backgroundColor = UIColor(hex: 0xD9FF3F)
         agree.layer.cornerRadius = 14
         agree.addAction(UIAction { [weak self] _ in
-            EULAStore.agree()           // 本地持久化（铁律 1：仅首次生效）
+            EULAStore.agree()
             self?.onAgree?()
         }, for: .touchUpInside)
 

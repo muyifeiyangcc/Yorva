@@ -2,7 +2,6 @@
 //  CreatePostSelectPromptViewController.swift
 //  Yorva
 //
-//  发帖第一步：选择免费 Prompt，或从付费 Prompt Sheet 中选择。
 //
 
 import UIKit
@@ -284,8 +283,8 @@ final class CreatePostSelectPromptViewController: BaseViewController {
             return
         }
         ConfirmDialog.show(
-            title: "Use this prompt?",
-            message: "This prompt costs \(prompt.costAmount) Coins. Your balance: \(CurrencyManager.shared.coins) Coins.",
+            title: "Unlock Prompt",
+            message: "Are you sure you want to spend \(prompt.costAmount) Coins to unlock an extra prompt for your post?",
             confirmTitle: "Spend \(prompt.costAmount) Coins",
             cancelTitle: "Cancel"
         ) { [weak self] in
@@ -552,6 +551,8 @@ private final class PaidPromptRowView: UIView {
         layer.borderColor = UIColor(hex: 0xE1E0D9).cgColor
         titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         titleLabel.textColor = AppTheme.ink
+        titleLabel.numberOfLines = 0
+        titleLabel.lineBreakMode = .byWordWrapping
         metadataLabel.font = .systemFont(ofSize: 10, weight: .regular)
         metadataLabel.textColor = UIColor(hex: 0x7B7E77)
         radio.layer.cornerRadius = 10

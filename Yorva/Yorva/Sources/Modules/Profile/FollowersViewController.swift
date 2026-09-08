@@ -2,7 +2,6 @@
 //  FollowersViewController.swift
 //  Yorva
 //
-//  Followers 列表 + 关注 / 取消关注（铁律 8 状态联动）
 //
 
 import UIKit

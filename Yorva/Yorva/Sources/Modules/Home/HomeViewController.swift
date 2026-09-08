@@ -3,7 +3,6 @@
 //  Yorva
 //
 //  Tab1 Home：For You / Following
-//  For You 顺序：首帖 → 今日/付费 Prompt → 其余帖子 → People to notice
 //
 
 import UIKit
@@ -119,7 +118,6 @@ final class HomeViewController: BaseViewController {
 
     override func refreshData() {
         profileAvatar.configure(user: AccountManager.shared.currentUser)
-        // 游客可正常浏览首页数据（铁律 2：仅拦截交互，点击任意位置弹必须登录弹窗）
         loadingView.hide()
         chooseFeaturedPromptsIfNeeded()
         let currentUserID = AccountManager.shared.currentUser?.id ?? ""
@@ -139,8 +137,6 @@ final class HomeViewController: BaseViewController {
         tableView.reloadData()
     }
 
-    /// 游客交互拦截：游客点击任意可交互元素均弹必须登录弹窗（铁律 2）
-    /// 返回 true 表示已拦截，调用方应终止后续操作
     @discardableResult
     private func interceptGuestAction() -> Bool {
         guard AccountManager.shared.isGuest else { return false }
@@ -208,8 +204,8 @@ final class HomeViewController: BaseViewController {
         if interceptGuestAction() { return }
         guard let prompt = featuredPaidPrompt else { return }
         ConfirmDialog.show(
-            title: "Use this prompt?",
-            message: "This prompt costs \(prompt.costAmount) Coins. Your balance: \(CurrencyManager.shared.coins) Coins.",
+            title: "Unlock Prompt",
+            message: "Are you sure you want to spend \(prompt.costAmount) Coins to unlock an extra prompt for your post?",
             confirmTitle: "Spend \(prompt.costAmount) Coins",
             cancelTitle: "Cancel"
         ) { [weak self] in
@@ -348,7 +344,7 @@ private final class HomeIntroHeaderView: UIView {
 
         let paragraph = NSMutableParagraphStyle()
         paragraph.lineSpacing = -6
-        titleLabel.attributedText = NSAttributedString(string: "Makeroom\nfor less.", attributes: [
+        titleLabel.attributedText = NSAttributedString(string: "Make room\nfor less.", attributes: [
             .font: UIFont.systemFont(ofSize: 38, weight: .bold),
             .foregroundColor: AppTheme.ink,
             .paragraphStyle: paragraph

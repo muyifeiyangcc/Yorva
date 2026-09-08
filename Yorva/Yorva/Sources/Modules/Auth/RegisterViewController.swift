@@ -2,7 +2,6 @@
 //  RegisterViewController.swift
 //  Yorva
 //
-//  注册（铁律 9 初始金币为 0 + 铁律 10 预置账号规则）
 //
 
 import UIKit
@@ -36,7 +35,7 @@ final class RegisterViewController: BaseViewController {
     }
 
     override func setupHierarchy() {
-        titleLabel.attributedText = AuthDesign.makeTitle("Makeroom for\nwhat matters.")
+        titleLabel.attributedText = AuthDesign.makeTitle("Make room for\nwhat matters.")
         subtitleLabel.text = "Create your account and start sharing the small choices that shape a lighter life."
 
         emailField.configureAuthField(placeholder: "you@example.com")
@@ -140,7 +139,6 @@ final class RegisterViewController: BaseViewController {
         errorLabel.text = ""
         switch AccountManager.shared.register(email: email, password: password) {
         case .success:
-            // 注册成功：进入完善资料页（资料不完整）
             let vc = CompleteProfileViewController()
             navigationController?.pushViewController(vc, animated: true)
         case .failure(let err):

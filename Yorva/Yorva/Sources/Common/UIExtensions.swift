@@ -2,12 +2,10 @@
 //  UIExtensions.swift
 //  Yorva
 //
-//  UIKit 通用扩展：UIView/UIViewController/Date/String 等
 //
 
 import UIKit
 
-// MARK: - UIView 便捷布局（SnapKit 之外的轻量包装，避免硬编码 frame）
 
 extension UIView {
     func pinEdges(to superview: UIView, insets: UIEdgeInsets = .zero) {
@@ -42,10 +40,8 @@ extension UIView {
     }
 }
 
-// MARK: - UIViewController 通用工具
 
 extension UIViewController {
-    /// 当前可见的导航栏高度（含状态栏 / 灵动岛 / 刘海差异化适配）
     var topbarHeight: CGFloat {
         let statusBar = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
         return max(statusBar, 20) + (navigationController?.navigationBar.bounds.height ?? 44)
@@ -58,7 +54,6 @@ extension UIViewController {
     }
 }
 
-// MARK: - Date 格式化
 
 extension Date {
     func timeAgoDisplay() -> String {
@@ -78,7 +73,6 @@ extension Date {
     }
 }
 
-// MARK: - String 校验
 
 extension String {
     var isValidEmail: Bool {
@@ -88,7 +82,6 @@ extension String {
     var isBlank: Bool { trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 }
 
-// MARK: - UIColor 随机占位（数据层生成占位头像底色时使用）
 
 extension UIColor {
     static var placeholderTint: UIColor {
@@ -109,7 +102,6 @@ extension UIApplication {
     }
 }
 
-// MARK: - 延时主线程（用于过渡动画 / 加载占位）
 
 func dispatchMain(_ block: @escaping () -> Void) {
     if Thread.isMainThread { block() } else { DispatchQueue.main.async(execute: block) }

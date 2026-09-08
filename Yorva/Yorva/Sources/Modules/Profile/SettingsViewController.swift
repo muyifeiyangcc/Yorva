@@ -2,7 +2,6 @@
 //  SettingsViewController.swift
 //  Yorva
 //
-//  Settings：Block List、Legal、Account Actions。
 //
 
 import UIKit

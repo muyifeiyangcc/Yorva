@@ -2,24 +2,15 @@
 //  SeedData.swift
 //  Yorva
 //
-//  初始化静态数据集中独立管理（铁律：数据层规范 + 全局动态数据规范）
-//  数据来源：Yorva（极简主义）数据文档（CSV）—— 共 6 个用户
-//  图片资源位于 Assets.xcassets/image/（imageset 名称 = 哈希资源名）
-//  视频资源位于 Bundle 内 file/ 目录（资源名 = 哈希名，不含 .mp4 后缀）
-//  后续替换正式本地数据时仅修改本文件即可，页面业务代码无需改动
 //
 
 import UIKit
 
 enum SeedData {
-    /// 预置测试账号（铁律 10）：123@gmail.com / 12345678
     static let prebuiltTestEmail = "123@gmail.com"
     static let prebuiltTestPassword = "12345678"
 
-    // MARK: - 用户池（CSV 6 位用户）
 
-    /// 6 位种子用户；id 固定，便于帖子/评论/关注关系引用
-    /// 金币、钻石、点赞数 CSV 未提供，按确认方案初始化为 0
     static func mockUsers() -> [User] {
         [
             User(id: "user-jamie",
@@ -85,7 +76,6 @@ enum SeedData {
         ]
     }
 
-    // MARK: - 主题（由 3 个免费 Prompt 派生，与 Explore 设计一致）
 
     static func mockThemes() -> [ThemeItem] {
         [
@@ -104,11 +94,9 @@ enum SeedData {
         ]
     }
 
-    // MARK: - Prompt（CSV：3 免费 + 5 付费，付费 300 coins）
 
     static func mockPrompts() -> [PromptItem] {
         [
-            // 免费 Prompt（帖子引用的 3 个问题）
             PromptItem(id: "p-free-keep", title: "What do you choose to keep?",
                        themeId: "theme-keep", costType: .free, costAmount: 0, isUsed: false,
                        metadata: "Keep · Personal choice"),
@@ -118,7 +106,6 @@ enum SeedData {
             PromptItem(id: "p-free-letgo", title: "What are you ready to let go of this week?",
                        themeId: "theme-letgo", costType: .free, costAmount: 0, isUsed: false,
                        metadata: "Let go · Reflection"),
-            // 付费 Prompt（300 coins）
             PromptItem(id: "p-paid-1", title: "What space in your home brings you the most inner peace?",
                        themeId: nil, costType: .coins, costAmount: 300, isUsed: false,
                        metadata: "Space · Inner peace"),
@@ -137,12 +124,10 @@ enum SeedData {
         ]
     }
 
-    // MARK: - 帖子（CSV 6 条动态；发布时间相隔约 1 天）
 
     static func mockPosts(users: [User]) -> [Post] {
         let now = Date()
         let day: TimeInterval = 24 * 3600
-        // 每条：(作者id, promptId, themeId, 媒体, 动态文案, 发布于几天前, 评论数)
         let samples: [(authorId: String, promptId: String, themeId: String,
                        media: PostMedia, answer: String, daysAgo: Double, commentCount: Int)] = [
             ("user-jamie", "p-free-habits", "theme-habits",
@@ -204,12 +189,10 @@ enum SeedData {
         }
     }
 
-    // MARK: - 评论（CSV 评论栏；评论人指定为非作者本人的其他用户）
 
     static func mockComments(users: [User], posts: [Post]) -> [Comment] {
         let now = Date()
         let hour: TimeInterval = 3600
-        // (帖子作者id, 评论人id, 评论文案)
         let rows: [(postAuthorId: String, commentAuthorId: String, text: String)] = [
             ("user-elena", "user-jamie", "Less is more."),
             ("user-nora", "user-sven", "Simply beautiful."),
@@ -231,7 +214,6 @@ enum SeedData {
         return out
     }
 
-    /// 聊天初始会话：CSV 无聊天数据，初始为空；Yorva AI 会话由 ChatManager 自动创建
     static func mockConversations(users: [User]) -> [Conversation] {
         []
     }

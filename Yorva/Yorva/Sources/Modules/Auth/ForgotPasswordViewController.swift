@@ -2,7 +2,6 @@
 //  ForgotPasswordViewController.swift
 //  Yorva
 //
-//  找回密码：保存成功后回到登录页
 //
 
 import UIKit
@@ -36,7 +35,7 @@ final class ForgotPasswordViewController: BaseViewController {
     }
 
     override func setupHierarchy() {
-        titleLabel.attributedText = AuthDesign.makeTitle("Makespace for a\nnew password.")
+        titleLabel.attributedText = AuthDesign.makeTitle("Create a\nnew password.")
         subtitleLabel.text = "Enter your email and choose a fresh password to get back to your Yorva."
 
         emailField.configureAuthField(placeholder: "you@example.com")

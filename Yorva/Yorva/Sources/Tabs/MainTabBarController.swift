@@ -2,15 +2,11 @@
 //  MainTabBarController.swift
 //  Yorva
 //
-//  四个 Tab 根页面 + 中央 + 发帖按钮
-//  铁律 2：游客点击任意 Tab 都触发必须登录拦截
-//  铁律 5：仅根页面显示 TabBar
 //
 
 import UIKit
 import SnapKit
 
-/// 设计稿中的浮动 TabBar：白色圆角胶囊、五个等宽触控槽位，图标直接使用 Assets 切图。
 final class CustomTabBarView: UIView {
 
     var onSelectTab: ((Int) -> Void)?
@@ -131,21 +127,18 @@ final class MainTabBarController: UITabBarController, UITabBarControllerDelegate
         let profile = ProfileViewController()
         profile.tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
 
-        // 每个 Tab 独立导航栈，根页面隐藏返回按钮、显示 TabBar
         viewControllers = [
             BaseNavigationController(rootViewController: home),
             BaseNavigationController(rootViewController: explore),
             BaseNavigationController(rootViewController: chat),
             BaseNavigationController(rootViewController: profile)
         ]
-        // 每个 Tab 根页面隐藏返回按钮（铁律 5：根页面展示 TabBar，二级页面隐藏）
         for nav in (viewControllers as? [UINavigationController] ?? []) {
             nav.delegate = self
             nav.navigationBar.prefersLargeTitles = false
         }
     }
 
-    /// 中央 + 按钮：游客拦截（铁律 2）；登录态进入发帖-选 Prompt（铁律 13 push 跳转）
     private func handleCenterPostButton() {
         guard requiresLoginIfNeeded() else { return }
         let create = CreatePostSelectPromptViewController()
@@ -155,7 +148,6 @@ final class MainTabBarController: UITabBarController, UITabBarControllerDelegate
     // MARK: - Delegate
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        // 游客切换 Tab：拦截并弹必须登录弹窗（铁律 2）
         if AccountManager.shared.isGuest {
             presentGuestLoginRequired()
             return false
@@ -175,26 +167,21 @@ final class MainTabBarController: UITabBarController, UITabBarControllerDelegate
         customTabBar.setSelectedIndex(index)
     }
 
-    /// 公开的 Tab 切换入口（用于头像等场景跳转到 Me 页时同步底部选中态）
     func switchToTab(_ index: Int) {
         guard let controllers = viewControllers, controllers.indices.contains(index) else { return }
         selectedIndex = index
         customTabBar.setSelectedIndex(index)
     }
 
-    /// 仅根 Tab 显示自定义 TabBar，二级页面推入时隐藏。
     func setCustomTabBarHidden(_ hidden: Bool, animated: Bool = false) {
         customTabBar.setHidden(hidden, animated: animated)
     }
 
-    /// 获取当前选中 Tab 对应导航栈
     var navigationControllerForSelectedTab: UINavigationController? {
         (selectedViewController as? UINavigationController)
     }
 
-    // MARK: - 游客拦截（铁律 2）
 
-    /// 触发任意游客操作时调用；返回 false 表示已被拦截
     @discardableResult
     func requiresLoginIfNeeded() -> Bool {
         if AccountManager.shared.isGuest {
@@ -208,7 +195,6 @@ final class MainTabBarController: UITabBarController, UITabBarControllerDelegate
         ConfirmDialog.show(title: "Sign in required",
                            message: "Please sign in to continue browsing Yorva.",
                            confirmTitle: "Sign in", cancelTitle: "Cancel") { [weak self] in
-            // 进入邮箱登录（push 跳转，铁律 13）
             guard let self = self, let nav = self.navigationControllerForSelectedTab else { return }
             let login = LoginEntryViewController()
             login.fromGuestFlow = true
@@ -217,5 +203,4 @@ final class MainTabBarController: UITabBarController, UITabBarControllerDelegate
     }
 }
 
-// 让 MainTabBarController 充当其子导航控制器的代理（用于禁用根页侧滑返回）
 extension MainTabBarController: UINavigationControllerDelegate {}

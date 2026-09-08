@@ -2,7 +2,6 @@
 //  ExploreViewController.swift
 //  Yorva
 //
-//  Tab2 Explore：四张主题卡 + Prompt library + People to notice
 //
 
 import UIKit
@@ -13,7 +12,7 @@ final class ExploreViewController: BaseViewController {
     override var pageBackgroundColor: UIColor { AppTheme.bgRoot }
     private let brandLabel = UILabel()
     private let profileAvatar = AvatarView()
-    private let tableView = UITableView(frame: .zero, style: .plain)
+    private let tableView = UITableView(frame: .zero, style: .grouped)
     private let introHeader = ExploreIntroHeaderView()
     private let introHeaderContainer = UIView()
     private var posts: [Post] = []
@@ -44,6 +43,7 @@ final class ExploreViewController: BaseViewController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
+        tableView.sectionHeaderTopPadding = 0
         tableView.estimatedRowHeight = 300
         tableView.rowHeight = UITableView.automaticDimension
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 92, right: 0)
@@ -173,10 +173,8 @@ extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
         navigationController?.pushViewController(controller, animated: true)
     }
 
-    // 铁律 6：付费 Prompt 校验余额 + 扣费确认弹窗；免费直接进入填写页
     private func handleUsePrompt(_ prompt: PromptItem) {
         guard AccountManager.shared.currentUser != nil, !AccountManager.shared.isGuest else {
-            // 游客态拦截（铁律 2）
             (tabBarController as? MainTabBarController)?.requiresLoginIfNeeded()
             return
         }
@@ -191,8 +189,8 @@ extension ExploreViewController: UITableViewDataSource, UITableViewDelegate {
                 return
             }
             ConfirmDialog.show(
-                title: "Use \(prompt.title)?",
-                message: "This prompt costs \(prompt.costAmount) Coins. Your balance: \(CurrencyManager.shared.coins).",
+                title: "Unlock Prompt",
+                message: "Are you sure you want to spend \(prompt.costAmount) Coins to unlock an extra prompt for your post?",
                 confirmTitle: "Use \(prompt.costAmount) Coins",
                 cancelTitle: "Cancel") {
                 if CurrencyManager.shared.spend(amount: prompt.costAmount) {
@@ -228,7 +226,6 @@ extension ExploreViewController: PostCardCellDelegate {
     }
     func postCardDidTapSave(_ cell: PostCardCell) { if let post = post(for: cell) { ContentManager.shared.toggleSave(postId: post.id) } }
 
-    /// 右上角头像：跳转个人页（Me），与首页行为一致
     @objc private func openProfile() {
         if AccountManager.shared.isGuest {
             (tabBarController as? MainTabBarController)?.requiresLoginIfNeeded()
@@ -294,48 +291,50 @@ private final class ExploreIntroHeaderView: UIView {
 private final class ThemeBrowseCell: UITableViewCell {
     static let reuseIdentifier = "ThemeBrowseCell"
     var onSelectTheme: ((ThemeItem) -> Void)?
-    private let rowsStack = UIStackView()
+    private let scrollView = UIScrollView()
+    private let themesStack = UIStackView()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         backgroundColor = .clear
         contentView.backgroundColor = .clear
-        rowsStack.axis = .vertical
-        rowsStack.spacing = 10
-        rowsStack.distribution = .fillEqually
-        contentView.addSubview(rowsStack)
-        rowsStack.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(17)
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = true
+        themesStack.axis = .horizontal
+        themesStack.spacing = 12
+        themesStack.alignment = .center
+        contentView.addSubview(scrollView)
+        scrollView.addSubview(themesStack)
+        scrollView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
             make.top.equalToSuperview()
+            make.height.equalTo(136)
             make.bottom.equalToSuperview().inset(8)
-            make.height.equalTo(264)
+        }
+        themesStack.snp.makeConstraints { make in
+            make.top.bottom.equalTo(scrollView.contentLayoutGuide)
+            make.height.equalTo(scrollView.frameLayoutGuide)
+            make.left.equalTo(scrollView.contentLayoutGuide).offset(17)
+            make.right.equalTo(scrollView.contentLayoutGuide).inset(17)
         }
     }
 
     required init?(coder: NSCoder) { fatalError() }
 
     func configure(themes: [ThemeItem]) {
-        rowsStack.arrangedSubviews.forEach {
-            rowsStack.removeArrangedSubview($0)
+        themesStack.arrangedSubviews.forEach {
+            themesStack.removeArrangedSubview($0)
             $0.removeFromSuperview()
         }
-        let items = Array(themes.prefix(4))
-        for chunk in stride(from: 0, to: items.count, by: 2) {
-            let row = UIStackView()
-            row.axis = .horizontal
-            row.spacing = 10
-            row.distribution = .fillEqually
-            for theme in items[chunk..<min(chunk + 2, items.count)] {
-                let card = ThemeBrowseCardView()
-                card.configure(theme: theme)
-                card.onTap = { [weak self] in self?.onSelectTheme?(theme) }
-                row.addArrangedSubview(card)
+        for theme in themes.prefix(4) {
+            let card = ThemeBrowseCardView()
+            card.configure(theme: theme)
+            card.onTap = { [weak self] in self?.onSelectTheme?(theme) }
+            themesStack.addArrangedSubview(card)
+            card.snp.makeConstraints { make in
+                make.width.height.equalTo(128)
             }
-            if row.arrangedSubviews.count == 1 {
-                row.addArrangedSubview(UIView())
-            }
-            rowsStack.addArrangedSubview(row)
         }
     }
 }
@@ -350,7 +349,7 @@ private final class ThemeBrowseCardView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        layer.cornerRadius = 18
+        layer.cornerRadius = 64
         layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -361,16 +360,21 @@ private final class ThemeBrowseCardView: UIView {
         layer.addSublayer(shadeLayer)
         titleLabel.font = .systemFont(ofSize: 15, weight: .regular)
         titleLabel.textColor = .white
+        titleLabel.textAlignment = .center
+        titleLabel.numberOfLines = 1
         descLabel.font = .systemFont(ofSize: 10, weight: .regular)
         descLabel.textColor = UIColor.white.withAlphaComponent(0.9)
+        descLabel.textAlignment = .center
+        descLabel.numberOfLines = 2
+        descLabel.lineBreakMode = .byWordWrapping
         [titleLabel, descLabel, tapButton].forEach { addSubview($0) }
         titleLabel.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(14)
-            make.bottom.equalTo(descLabel.snp.top).offset(-3)
+            make.left.right.equalToSuperview().inset(8)
+            make.centerY.equalToSuperview().offset(-9)
         }
         descLabel.snp.makeConstraints { make in
-            make.left.right.equalTo(titleLabel)
-            make.bottom.equalToSuperview().inset(12)
+            make.left.right.equalToSuperview().inset(8)
+            make.top.equalTo(titleLabel.snp.bottom).offset(3)
         }
         tapButton.snp.makeConstraints { $0.edges.equalToSuperview() }
         tapButton.addAction(UIAction { [weak self] _ in self?.onTap?() }, for: .touchUpInside)
@@ -380,6 +384,7 @@ private final class ThemeBrowseCardView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        layer.cornerRadius = min(bounds.width, bounds.height) / 2
         shadeLayer.frame = bounds
         shadeLayer.cornerRadius = layer.cornerRadius
     }

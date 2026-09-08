@@ -2,7 +2,6 @@
 //  ChatListViewController.swift
 //  Yorva
 //
-//  Tab3：聊天入口、Yorva AI Banner 和 Recent 会话列表。
 //
 
 import UIKit
@@ -78,8 +77,6 @@ final class ChatListViewController: BaseViewController {
         profileAvatar.configure(user: AccountManager.shared.currentUser)
         conversations = ChatManager.shared.conversationsForCurrentUser()
         if conversations.isEmpty {
-            // 空会话占位：使用 tableView.backgroundView（由 tableView 管理 frame，
-            // 固定居中于列表可视区域，不随内容滚动）
             let empty = EmptyStateView()
             empty.configure(title: "No conversations yet",
                             subtitle: "Explore people you'd like to chat with.",
@@ -101,7 +98,6 @@ final class ChatListViewController: BaseViewController {
         navigationController?.pushViewController(controller, animated: true)
     }
 
-    /// 右上角头像：跳转个人页（Me），与首页行为一致
     @objc private func openProfile() {
         if AccountManager.shared.isGuest {
             (tabBarController as? MainTabBarController)?.requiresLoginIfNeeded()

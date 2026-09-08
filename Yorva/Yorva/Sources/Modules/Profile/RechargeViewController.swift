@@ -191,8 +191,8 @@ final class RechargeViewController: BaseViewController, StoreKitManagerDelegate 
         let paidCount = ContentManager.shared.paidPrompts().count
         let promptCost = ContentManager.shared.paidPrompts().map(\.costAmount).min() ?? 0
         let rows = [
-            "Choose one from the \(paidCount) prompts: \(promptCost) Coins",
-            "Yorva AI additional question: \(ChatManager.shared.yorvaAICostPerQuestion) coins per question"
+            "Choose a prompt: \(promptCost) Coins each",
+            "Ask Yora AI: \(ChatManager.shared.yorvaAICostPerQuestion) coins per question"
         ]
         for (index, text) in rows.enumerated() {
             let row = UIView()

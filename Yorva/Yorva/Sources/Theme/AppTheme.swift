@@ -2,25 +2,20 @@
 //  AppTheme.swift
 //  Yorva
 //
-//  主题色 / 业务色 / 背景色 / 文字色统一常量
-//  来源：docs/ios-design-spec.md 第 5 章
 //
 
 import UIKit
 
 enum AppTheme {
-    // MARK: - Primary 主色
     static let primary         = UIColor(hex: 0xC25B3F)
     static let primaryPressed  = UIColor(hex: 0xA84A30)
     static let primaryDisabled = UIColor(hex: 0xE0B5A6)
 
-    // MARK: - Secondary 辅助
     static let olive  = UIColor(hex: 0x2F3E2C)
     static let cream  = UIColor(hex: 0xF1E7D4)
     static let ink    = UIColor(hex: 0x1A1A1A)
     static let stone  = UIColor(hex: 0x9A9A9A)
 
-    // MARK: - Semantic 业务语义
     static let coins       = UIColor(hex: 0xE0A458)
     static let coinsBg     = UIColor(hex: 0xFBF1DF)
     static let diamonds    = UIColor(hex: 0x5B8DBE)
@@ -34,7 +29,6 @@ enum AppTheme {
     static let divider     = UIColor(hex: 0xE8E4DD)
     static let overlay      = UIColor.black.withAlphaComponent(0.4)
 
-    // MARK: - Background 页面背景
     static let bgSplash   = UIColor(hex: 0xF5EFE6)
     static let bgRoot     = UIColor(hex: 0xFAF7F2)
     static let bgPrimary  = UIColor(hex: 0xFFFFFF)

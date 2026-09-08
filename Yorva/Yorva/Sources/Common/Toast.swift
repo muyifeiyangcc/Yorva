@@ -2,7 +2,6 @@
 //  Toast.swift
 //  Yorva
 //
-//  全局轻量 Toast 提示（半透明黑底白字，符合 ios-design-spec Toast 规范）
 //
 
 import UIKit

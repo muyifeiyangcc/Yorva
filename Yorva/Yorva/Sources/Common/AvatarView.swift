@@ -2,8 +2,6 @@
 //  AvatarView.swift
 //  Yorva
 //
-//  通用头像视图：有图片时展示原图，没有设置头像时展示灰色系统默认头像
-//  尺寸由调用方通过 AutoLayout 设定，匹配设计稿图标尺寸
 //
 
 import UIKit
@@ -44,7 +42,6 @@ final class AvatarView: UIView {
             showDefaultAvatar()
             return
         }
-        // 优先本地 Asset 资源头像（初始化静态数据）
         if let assetName = u.avatarAssetName, let assetImage = UIImage(named: assetName) {
             backgroundColor = .clear
             initialsLabel.isHidden = true
@@ -53,7 +50,6 @@ final class AvatarView: UIView {
             imageView.isHidden = false
             return
         }
-        // 其次用户运行期选择的头像
         if let image = u.avatarImage {
             backgroundColor = u.avatarPlaceholderColor
             initialsLabel.text = u.avatarInitials
@@ -93,8 +89,6 @@ final class AvatarView: UIView {
     }
 }
 
-/// 占位图标视图（暂无切图）：纯色圆角矩形，便于后续替换图片资源
-/// 调用方传入 design 尺寸，便于后续直接替换图片资源
 final class PlaceholderIconView: UIView {
 
     private let symbolLabel = UILabel()
@@ -128,7 +122,6 @@ final class PlaceholderIconView: UIView {
     required init?(coder: NSCoder) { fatalError() }
 }
 
-/// 通用主按钮（已激活态：主色背景 + 白文字）
 final class PrimaryButton: UIButton {
     init(title: String) {
         super.init(frame: .zero)
@@ -143,7 +136,6 @@ final class PrimaryButton: UIButton {
     required init?(coder: NSCoder) { fatalError() }
 }
 
-/// 文字按钮（品牌色文字按钮，如 I'm new / Use this prompt）
 final class TextLinkButton: UIButton {
     init(title: String) {
         super.init(frame: .zero)

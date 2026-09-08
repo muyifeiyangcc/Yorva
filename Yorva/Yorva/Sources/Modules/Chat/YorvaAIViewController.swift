@@ -15,19 +15,22 @@ final class YorvaAIViewController: BaseViewController {
 
     private let topBar = UIView()
     private let backButton = UIButton(type: .system)
-    private let moreButton = UIButton(type: .system)
+    private let coinBalanceButton = UIControl()
+    private let coinBalanceIcon = UIImageView(image: UIImage(named: "coin"))
+    private let coinBalanceLabel = UILabel()
     private let navTitleLabel = UILabel()
     private let topDivider = UIView()
 
-    /// 是否已确认过金币扣费（确认后本次会话内不再重复弹窗，直接发送）
-    private var hasConfirmedCoinSpend = false
+    private static let coinConfirmKey = "yorva.ai.coin.confirmed.v1"
+    private var hasConfirmedCoinSpend: Bool {
+        UserDefaults.standard.bool(forKey: Self.coinConfirmKey)
+    }
+    private func markCoinConfirmed() {
+        UserDefaults.standard.set(true, forKey: Self.coinConfirmKey)
+        UserDefaults.standard.synchronize()
+    }
 
-    private let bannerView = UIView()
-    private let bannerImageView = UIImageView(image: UIImage(named: "ai_bg"))
-    private let bannerMask = UIView()
-    private let bannerEyebrow = UILabel()
-    private let bannerTitle = UILabel()
-    private let bannerDescription = UILabel()
+    private let bannerView = UIImageView(image: UIImage(named: "ai_chat_bg"))
 
     private let quotaView = UIView()
     private let quotaCaption = UILabel()
@@ -48,19 +51,6 @@ final class YorvaAIViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Yorva AI"
-        navigationController?.setNavigationBarHidden(true, animated: false)
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: false)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if navigationController?.topViewController !== self {
-            navigationController?.setNavigationBarHidden(false, animated: false)
-        }
     }
 
     override func setupHierarchy() {
@@ -85,28 +75,8 @@ final class YorvaAIViewController: BaseViewController {
 
         bannerView.snp.makeConstraints { make in
             make.top.equalTo(topBar.snp.bottom).offset(18)
-            make.left.right.equalToSuperview().inset(17)
+            make.left.right.equalToSuperview().inset(0)
             make.height.equalTo(142)
-        }
-        bannerImageView.snp.makeConstraints { make in make.edges.equalToSuperview() }
-        bannerMask.snp.makeConstraints { make in
-            make.left.top.bottom.equalToSuperview()
-            make.width.equalTo(204)
-        }
-        bannerEyebrow.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.left.equalToSuperview().offset(12)
-            make.right.equalToSuperview().offset(-4)
-        }
-        bannerTitle.snp.makeConstraints { make in
-            make.top.equalTo(bannerEyebrow.snp.bottom).offset(5)
-            make.left.equalTo(bannerEyebrow)
-            make.right.equalToSuperview().offset(-8)
-        }
-        bannerDescription.snp.makeConstraints { make in
-            make.top.equalTo(bannerTitle.snp.bottom).offset(4)
-            make.left.equalTo(bannerEyebrow)
-            make.right.equalToSuperview().offset(-8)
         }
 
         quotaView.snp.makeConstraints { make in
@@ -204,18 +174,41 @@ final class YorvaAIViewController: BaseViewController {
         topBar.backgroundColor = .clear
         topDivider.backgroundColor = AppTheme.divider
         topBar.addSubview(backButton)
-        topBar.addSubview(moreButton)
+        topBar.addSubview(coinBalanceButton)
         topBar.addSubview(navTitleLabel)
         topBar.addSubview(topDivider)
-        [backButton, moreButton].forEach {
-            $0.backgroundColor = AppTheme.bgPrimary
-            $0.layer.cornerRadius = 18
-            $0.layer.borderWidth = 1
-            $0.layer.borderColor = AppTheme.divider.cgColor
-            $0.tintColor = AppTheme.ink
+        backButton.backgroundColor = AppTheme.bgPrimary
+        backButton.layer.cornerRadius = 18
+        backButton.layer.borderWidth = 1
+        backButton.layer.borderColor = AppTheme.divider.cgColor
+        backButton.tintColor = AppTheme.ink
+        coinBalanceButton.backgroundColor = AppTheme.bgPrimary
+        coinBalanceButton.layer.cornerRadius = 18
+        coinBalanceButton.layer.borderWidth = 1
+        coinBalanceButton.layer.borderColor = AppTheme.divider.cgColor
+        coinBalanceButton.accessibilityLabel = "Coin balance"
+        coinBalanceButton.accessibilityTraits = .button
+        coinBalanceButton.addAction(UIAction { [weak self] _ in
+            let recharge = RechargeViewController()
+            self?.navigationController?.pushViewController(recharge, animated: true)
+        }, for: .touchUpInside)
+        coinBalanceIcon.contentMode = .scaleAspectFit
+        coinBalanceIcon.clipsToBounds = true
+        coinBalanceLabel.font = .monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
+        coinBalanceLabel.textColor = AppTheme.ink
+        coinBalanceLabel.text = "\(CurrencyManager.shared.coins) Coins"
+        [coinBalanceIcon, coinBalanceLabel].forEach { coinBalanceButton.addSubview($0) }
+        coinBalanceIcon.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(9)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(20)
+        }
+        coinBalanceLabel.snp.makeConstraints { make in
+            make.left.equalTo(coinBalanceIcon.snp.right).offset(5)
+            make.right.equalToSuperview().inset(10)
+            make.centerY.equalToSuperview()
         }
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        moreButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
         backButton.addAction(UIAction { [weak self] _ in self?.handleBackTapped() }, for: .touchUpInside)
         navTitleLabel.attributedText = trackedTitle("YORVA AI", tracking: 2.0, font: AppFont.navTitle())
         navTitleLabel.textColor = AppTheme.textSecondary
@@ -226,37 +219,19 @@ final class YorvaAIViewController: BaseViewController {
             make.top.equalToSuperview().offset(6)
             make.width.height.equalTo(36)
         }
-        moreButton.snp.makeConstraints { make in
+        coinBalanceButton.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-16)
             make.top.equalTo(backButton)
-            make.width.height.equalTo(36)
+            make.height.equalTo(36)
         }
-        moreButton.alpha = 0;
         navTitleLabel.snp.makeConstraints { make in make.center.equalToSuperview() }
     }
 
     private func configureBanner() {
-        bannerView.backgroundColor = .white
-        bannerView.layer.cornerRadius = 22
-        bannerView.layer.masksToBounds = true
-        bannerImageView.contentMode = .scaleAspectFill
-        bannerImageView.clipsToBounds = true
-        bannerMask.backgroundColor = .white
-        bannerView.addSubview(bannerImageView)
-        bannerView.addSubview(bannerMask)
-        bannerView.addSubview(bannerEyebrow)
-        bannerView.addSubview(bannerTitle)
-        bannerView.addSubview(bannerDescription)
-        bannerEyebrow.attributedText = trackedTitle("A LITTLE CLARITY, ON DEMAND", tracking: 0.7)
-        bannerEyebrow.textColor = AppTheme.olive
-        bannerEyebrow.font = AppFont.micro()
-        bannerTitle.text = "Ask Yorva."
-        bannerTitle.textColor = AppTheme.ink
-        bannerTitle.font = .systemFont(ofSize: 27, weight: .semibold)
-        bannerDescription.text = "Find a gentler question, shape a prompt, or make space for what matters."
-        bannerDescription.textColor = AppTheme.textSecondary
-        bannerDescription.font = .systemFont(ofSize: 11, weight: .regular)
-        bannerDescription.numberOfLines = 3
+        bannerView.contentMode = .scaleAspectFill
+//        bannerView.layer.cornerRadius = 22
+//        bannerView.layer.masksToBounds = true
+//        bannerView.clipsToBounds = true
     }
 
     private func configureQuota() {
@@ -331,6 +306,7 @@ final class YorvaAIViewController: BaseViewController {
 
     private func updateQuotaLabel() {
         quotaLabel.text = "\(ChatManager.shared.yorvaRemainingFree) / \(ChatManager.shared.yorvaAIFreeQuota)"
+        coinBalanceLabel.text = "\(CurrencyManager.shared.coins) Coins"
     }
 
     private func attemptAsk() {
@@ -351,7 +327,6 @@ final class YorvaAIViewController: BaseViewController {
             }
             return
         }
-        // 已确认过金币扣费 → 直接发送，不再弹窗
         if hasConfirmedCoinSpend {
             if CurrencyManager.shared.spend(amount: cost) {
                 ChatManager.shared.sendYorvaAIQuestion(text)
@@ -366,7 +341,7 @@ final class YorvaAIViewController: BaseViewController {
             cancelTitle: "Cancel") { [weak self] in
                 guard let self else { return }
                 if CurrencyManager.shared.spend(amount: cost) {
-                    self.hasConfirmedCoinSpend = true
+                    self.markCoinConfirmed()
                     ChatManager.shared.sendYorvaAIQuestion(text)
                     self.textField.text = ""
                 }

@@ -2,7 +2,6 @@
 //  SceneDelegate.swift
 //  Yorva
 //
-//  替换 storyboard 自动绑定：以代码创建 UIWindow 并交给 RootCoordinator 决策首启路由
 //
 
 import UIKit

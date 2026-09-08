@@ -2,12 +2,6 @@
 //  CustomSheet.swift
 //  Yorva
 //
-//  自定义底部 Sheet（铁律 12：禁用系统 sheet）
-//  - 白色背景
-//  - cell 等高
-//  - 有 Cancel 按钮
-//  - item 内容根据传入参数动态显示
-//  - 关闭 / 取消不改变业务状态；选择项确认后才回调业务流程
 //
 
 import UIKit
@@ -15,8 +9,8 @@ import SnapKit
 
 struct SheetItem {
     let title: String
-    let icon: String?           // SF Symbols 占位，便于后续替换图标资源
-    let isCancel: Bool          // Cancel 按钮放在最后，高度更大间距更深
+    let icon: String?
+    let isCancel: Bool
     let handler: (() -> Void)?
 }
 
@@ -45,10 +39,7 @@ final class CustomSheet: UIView {
     }
     required init?(coder: NSCoder) { fatalError() }
 
-    /// 显示自定义底部 Sheet
     /// - Parameters:
-    ///   - title: 顶部标题（可选，符合设计稿顶部居中标题）
-    ///   - items: 动态条目（最后一项可标记 isCancel）
     static func show(title: String? = nil, items: [SheetItem]) {
         guard let host = UIApplication.shared.activeKeyWindow else { return }
         let sheet = CustomSheet()
@@ -123,7 +114,7 @@ final class CustomSheet: UIView {
         row.addSubview(label)
         label.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.equalTo(item.isCancel ? 56 : 50)  // 等高 cell + Cancel 更深间距
+            make.height.equalTo(item.isCancel ? 56 : 50)
         }
         let btn = UIButton(type: .system)
         btn.addAction(UIAction { [weak self] _ in

@@ -2,7 +2,6 @@
 //  BlockListViewController.swift
 //  Yorva
 //
-//  Block List + Unblock（铁律：拉黑逻辑；解除拉黑后内容恢复展示）
 //
 
 import UIKit

@@ -2,7 +2,6 @@
 //  CompleteProfileViewController.swift
 //  Yorva
 //
-//  完善资料 / 编辑资料（首次登录后必填；铁律 11 头像 Sheet / 铁律 12 自定义 Sheet）
 //
 
 import UIKit
@@ -231,7 +230,6 @@ final class CompleteProfileViewController: BaseViewController {
         }
     }
 
-    // MARK: - 头像 Sheet（铁律 11 / 12）
 
     private func showAvatarSheet() {
         CustomSheet.show(title: "Change avatar", items: [

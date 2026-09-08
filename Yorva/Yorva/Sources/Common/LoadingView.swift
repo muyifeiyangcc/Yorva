@@ -2,8 +2,6 @@
 //  LoadingView.swift
 //  Yorva
 //
-//  加载中遮罩（半透明黑底菊花，关键节点动画）
-//  状态管理：加载中 / 解析异常 / 正常数据（铁律 11）
 //
 
 import UIKit

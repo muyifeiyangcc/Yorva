@@ -2,7 +2,6 @@
 //  EmailLoginViewController.swift
 //  Yorva
 //
-//  邮箱登录（铁律 4 + 铁律 10）
 //
 
 import UIKit
@@ -275,7 +274,6 @@ final class AuthBottomButton: UIButton {
 }
 
 extension UITextField {
-    /// 旧页面仍使用的通用输入框样式；保留该入口避免影响非登录表单。
     func configureYorvaField(placeholder: String) {
         font = AppFont.textFieldInput()
         textColor = AppTheme.ink

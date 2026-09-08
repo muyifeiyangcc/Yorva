@@ -2,8 +2,6 @@
 //  AccountManager.swift
 //  Yorva
 //
-//  账号体系：注册 / 登录 / 找回密码 / 删除账号 / 完善资料 / 游客态
-//  铁律 2、铁律 4、铁律 10
 //
 
 import Foundation
@@ -13,7 +11,6 @@ final class AccountManager {
 
     static let shared = AccountManager()
 
-    // 持久化键
     private let accountsKey = "yorva.accounts.v1"
     private let currentIdKey = "yorva.current.account.id"
     private let deletedEmailsKey = "yorva.deleted.emails.v1"
@@ -29,14 +26,12 @@ final class AccountManager {
         accounts.forEach { DataRepository.shared.upsertUser($0) }
     }
 
-    // MARK: - Accounts persistence（轻量持久化，仅本地）
 
     private func loadAccounts() {
         if let data = UserDefaults.standard.data(forKey: accountsKey),
            let decoded = try? JSONDecoder().decode([UserDTO].self, from: data) {
             accounts = decoded.map { $0.toUser() }
         } else {
-            // 预置账号未持久化时，注入首启可用账号（铁律 10）
             accounts = []
             ensurePrebuiltAccount()
         }
@@ -47,7 +42,6 @@ final class AccountManager {
 
     private func ensurePrebuiltAccount() {
         guard !accounts.contains(where: { $0.email == SeedData.prebuiltTestEmail }) else { return }
-        // 默认 1 个关注对象从初始化默认静态数据源随机选取一条；延迟到登录成功时建立关系，避免账号未登录即写入关系
         let prebuilt = User(
             id: "user-prebuilt",
             email: SeedData.prebuiltTestEmail,
@@ -91,14 +85,12 @@ final class AccountManager {
 
     // MARK: - Account lifecycle
 
-    /// 注册新账号；新用户初始化金币数值固定为 0（铁律 9）
     func register(email: String, password: String) -> Result<User, AccountError> {
         guard email.isValidEmail else { return .failure(.invalidEmail) }
         guard password.count >= 8 else { return .failure(.passwordTooShort) }
         if accounts.contains(where: { $0.email.lowercased() == email.lowercased() && !$0.isDeleted }) {
             return .failure(.emailExists)
         }
-        // 之前删除过同名邮箱：本次注册复活邮箱（铁律 10：删除后失效，但允许新注册同邮箱重新激活）
         let newId = "user-\(UUID().uuidString.prefix(8))"
         let user = User(
             id: newId,
@@ -116,22 +108,15 @@ final class AccountManager {
             diamonds: 0,
             isGuest: false
         )
-        // 默认 1 个关注对象，从初始化默认静态数据源随机选取一条（铁律 10）
-        let followPool = DataRepository.shared.users.filter { $0.id != newId }
-        if let followee = followPool.randomElement() {
-            FollowManager.shared.follow(followerId: newId, followeeId: followee.id)
-        }
         accounts.append(user)
         DataRepository.shared.upsertUser(user)
         persist()
-        // 注册成功：进入完善资料页（资料不完整）
         currentUser = user
         isGuest = false
         persistCurrent()
         return .success(user)
     }
 
-    /// 邮箱登录（铁律 10：被删除账号无法登录）
     func login(email: String, password: String) -> Result<User, AccountError> {
         guard let user = accounts.first(where: { $0.email.lowercased() == email.lowercased() }) else {
             return .failure(.accountNotFound)
@@ -141,20 +126,14 @@ final class AccountManager {
         currentUser = user
         isGuest = false
         persistCurrent()
-        // 预置测试账号：默认拥有 2 个粉丝（Jamie M. / Elena Vance 关注该账号），幂等建立
         if user.id == "user-prebuilt" {
             ["user-jamie", "user-elena"].forEach { followerId in
                 FollowManager.shared.follow(followerId: followerId, followeeId: user.id)
             }
-        } else if FollowManager.shared.following(userId: user.id).isEmpty {
-            // 其他账号兜底：从初始化静态数据源随机选取 1 个关注对象
-            let pool = DataRepository.shared.users.filter { $0.id != user.id }
-            if let f = pool.randomElement() { FollowManager.shared.follow(followerId: user.id, followeeId: f.id) }
         }
         return .success(user)
     }
 
-    /// 找回密码：成功后回到登录页（铁律 4 推动邮箱登录流程）
     func resetPassword(email: String, newPassword: String) -> Result<Void, AccountError> {
         guard email.isValidEmail else { return .failure(.invalidEmail) }
         guard newPassword.count >= 8 else { return .failure(.passwordTooShort) }
@@ -166,7 +145,6 @@ final class AccountManager {
         return .success(())
     }
 
-    /// 完善资料 / 编辑资料
     func updateProfile(nickname: String, bio: String, birthday: String, location: String, gender: String,
                        avatarColor: UIColor, initials: String, avatarImage: UIImage? = nil) {
         guard var user = currentUser else { return }
@@ -188,7 +166,6 @@ final class AccountManager {
         DataRepository.shared.broadcast(.profileUpdated)
     }
 
-    /// 退出登录：清理当前会话，但保留账户数据（铁律 5 + 10）
     func logout() {
         currentUser = nil
         isGuest = false
@@ -197,7 +174,6 @@ final class AccountManager {
         DataRepository.shared.broadcast(.sessionCleared)
     }
 
-    /// 删除账号：本地标记失效，重启无法登录（铁律 10）
     func deleteAccount() {
         guard var user = currentUser else { return }
         let deletedUserID = user.id
@@ -215,20 +191,17 @@ final class AccountManager {
         logout()
     }
 
-    /// 游客入口（铁律 2）：进入游客态
     func enterGuestMode() {
         currentUser = nil
         isGuest = true
         persistCurrent()
     }
 
-    /// 资料是否完整（注册成功后进入完善资料页）
     func isProfileComplete(_ user: User) -> Bool {
         // Location is optional and is no longer part of profile completion.
         return !user.nickname.isBlank && !user.birthday.isBlank && !user.gender.isBlank
     }
 
-    /// 写入金币变更（仅 CurrencyManager 应调用，避免散落写入）
     func applyCurrencyChange(coins: Int, diamonds: Int) {
         guard var user = currentUser else { return }
         user.coins = max(0, user.coins + coins)
@@ -260,7 +233,6 @@ enum AccountError: Error {
     }
 }
 
-// MARK: - DTO 持久化辅助
 
 private struct UserDTO: Codable {
     let id: String

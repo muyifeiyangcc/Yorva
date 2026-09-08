@@ -2,10 +2,6 @@
 //  ProfileViewController.swift
 //  Yorva
 //
-//  Tab4 Profile（铁律 5 / 铁律 8 / 铁律 9）
-//  - 头像、昵称、签名；Posts / Followers / Following 数字
-//  - Coins 横幅显示余额 + Recharge
-//  - My posts / Saved 切换列表
 //
 
 import UIKit
@@ -107,7 +103,6 @@ final class ProfileViewController: BaseViewController {
         coinsTitle.text = "COIN BALANCE"
         coinsLabel.font = .monospacedDigitSystemFont(ofSize: 30, weight: .bold)
         coinsLabel.textColor = AppTheme.ink
-        // Recharge 文案已包含在 me_coin_bg 切图中，按钮仅保留透明点击区域。
         rechargeButton.setTitle(nil, for: .normal)
         rechargeButton.backgroundColor = .clear
         rechargeButton.isUserInteractionEnabled = false
@@ -224,7 +219,6 @@ final class ProfileViewController: BaseViewController {
 
     override func refreshData() {
         if AccountManager.shared.isGuest {
-            // 游客态（铁律 2）：不展示任何内容，拦截已在根页面统一处理
             return
         }
         let user = AccountManager.shared.currentUser

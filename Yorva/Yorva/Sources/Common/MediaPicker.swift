@@ -2,8 +2,6 @@
 //  MediaPicker.swift
 //  Yorva
 //
-//  相册 / 相机媒体选择器。统一处理 PHPicker 与 UIImagePickerController，
-//  页面只接收已经解析好的图片、视频 URL、比例和时长。
 //
 
 import UIKit

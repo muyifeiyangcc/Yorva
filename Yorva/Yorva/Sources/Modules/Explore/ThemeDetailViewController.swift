@@ -2,7 +2,6 @@
 //  ThemeDetailViewController.swift
 //  Yorva
 //
-//  Tab2 二级页：主题详情（顶部大图 + 标签 + 描述 + Worth a closer look 帖子列表）
 //
 
 import UIKit
@@ -134,7 +133,6 @@ final class ThemeDetailViewController: BaseViewController {
             loadingView.hide()
         }
         tableView.reloadData()
-        // 内容超出时允许纵向滚动：tableView 默认即纵向滚动；当超出屏幕时自动滚动（铁律：滚动容错）
     }
 
     private func detailDescription(for theme: ThemeItem) -> String {

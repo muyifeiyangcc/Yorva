@@ -2,7 +2,6 @@
 //  ContentManager.swift
 //  Yorva
 //
-//  内容仓库：帖子 / 评论 / Prompt / 主题 / 点赞 / 收藏（动态、持久化、按账号隔离）
 //
 
 import Foundation
@@ -30,7 +29,6 @@ final class ContentManager {
         reloadSeed()
     }
 
-    /// 载入已保存的内容；首次安装时才使用 SeedData 作为初始数据。
     func reloadSeed() {
         themes = SeedData.mockThemes()
         prompts = SeedData.mockPrompts()
@@ -117,7 +115,6 @@ final class ContentManager {
         return BlockManager.shared.filterPosts(posts.filter { $0.authorId == authorId && $0.isVisible }).sorted { $0.createdAt > $1.createdAt }
     }
 
-    /// 指定用户真实收藏的帖子，支持在他人个人资料页展示 Saved。
     func savedPosts(forUserId userId: String) -> [Post] {
         ensureCurrentUserScope()
         let savedIDs = Set(savedByUser[userId] ?? [])
@@ -266,7 +263,6 @@ private struct PostMediaDTO: Codable {
         kind = m.kind == .image ? "image" : "video"; aspectRatio = Double(m.aspectRatio)
         duration = m.duration
         placeholderHex = MainActor.assumeIsolated { Self.hex(m.placeholderColor) }
-        // Asset 目录图片不编码进 UserDefaults，仅持久化资源名
         imageData = m.imageAssetName == nil ? m.image.flatMap { image in
             MainActor.assumeIsolated { image.jpegData(compressionQuality: 0.85) }
         } : nil

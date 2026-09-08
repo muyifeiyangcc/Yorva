@@ -2,7 +2,6 @@
 //  AuthorProfileViewController.swift
 //  Yorva
 //
-//  他人个人资料：资料卡、只读统计、Posts / Saved 列表。
 //
 
 import UIKit

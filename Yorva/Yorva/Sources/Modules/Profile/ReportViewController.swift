@@ -2,8 +2,6 @@
 //  ReportViewController.swift
 //  Yorva
 //
-//  Report：单选举报原因 + 提交仅本地记录（铁律：拉黑 ≠ 举报）
-//  举报不触发内容屏蔽；目标用户及其内容仍正常展示
 //
 
 import UIKit
@@ -122,7 +120,6 @@ final class ReportViewController: BaseViewController {
         }
         let me = AccountManager.shared.currentUser?.id ?? ""
         ReportManager.shared.report(reporterId: me, targetUserId: targetUserId, reason: reason)
-        // 举报仅本地记录，不调用 BlockManager，不影响内容展示
         Toast.show("Report submitted")
         navigationController?.popViewController(animated: true)
     }

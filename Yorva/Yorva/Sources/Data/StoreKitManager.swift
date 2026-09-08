@@ -2,10 +2,6 @@
 //  StoreKitManager.swift
 //  Yorva
 //
-//  内购统一管理类（铁律 9）
-//  强制使用 StoreKit V1 (SKPaymentQueue)，禁止 StoreKit 2
-//  商品类型固定为消耗型商品 (nonConsumable 走 consumable 流程)
-//  凭证不做服务端校验，仅以本地回调的成功状态判定订单生效
 //
 
 import UIKit
@@ -25,7 +21,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
 
     weak var delegate: StoreKitManagerDelegate?
 
-    // 测试环境 Bundle ID: app.myfy.test 固定 6 个内购 ProductId
     static let testProductIds: [String] = [
         "lvbsvhxcgcrvesor",
         "dxismgcwewhrtezo",
@@ -35,7 +30,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
         "ymohxnvpkqxutvab"
     ]
 
-    // 预留扩展：正式环境 10 个 ProductId 占位（与测试环境分离，运行时按 Bundle ID 适配）
     static let prodProductIds: [String] = [
         "yorva.prod.coin.small",
         "yorva.prod.coin.medium",
@@ -49,7 +43,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
         "yorva.prod.bundle.value"
     ]
 
-    // 测试环境固定美元标价（不使用 SKProduct.priceLocale，统一固定展示美元标价）
     private static let testPriceMap: [String: Double] = [
         "lvbsvhxcgcrvesor": 0.99,
         "dxismgcwewhrtezo": 1.99,
@@ -75,7 +68,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
         "ymohxnvpkqxutvab": "10,800 Coins"
     ]
 
-    // 正式环境预置（10 个）价格 / 数额占位，正式上架时由 SKProduct 回填
     private static let prodPriceMap: [String: Double] = [
         "yorva.prod.coin.small": 0.99,
         "yorva.prod.coin.medium": 1.99,
@@ -113,13 +105,11 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
         "yorva.prod.bundle.value": "63,700 Coins"
     ]
 
-    // 运行时有效 ProductId 列表（按 Bundle ID 自动判定环境，避免硬编码商品条目）
     private(set) var availableProducts: [WalletProduct] = []
 
     private var productsRequest: SKProductsRequest?
     private var pendingPurchaseProductId: String?
 
-    // 环境判定：测试环境 Bundle ID 为 app.myfy.test
     private var isTestEnvironment: Bool {
         Bundle.main.bundleIdentifier == "app.myfy.test"
     }
@@ -131,7 +121,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
 
     // MARK: - Query
 
-    /// 拉取当前环境有效内购商品列表（动态渲染，禁止硬编码）
     func requestProducts() {
         let ids: Set<String> = Set(isTestEnvironment ? Self.testProductIds : Self.prodProductIds)
         productsRequest?.cancel()
@@ -164,7 +153,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
         let coinMap = isTestEnvironment ? Self.testCoinMap : Self.prodCoinMap
         let titleMap = isTestEnvironment ? Self.testTitleMap : Self.prodTitleMap
         for product in response.products {
-            // 价格统一固定展示美元标价，不读取 SKProduct.priceLocale
             // Keep presentation in USD even when the App Store account locale differs.
             // Product identity is the source of truth for this fixed catalog.
             let usd = priceMap[product.productIdentifier] ?? 0.99
@@ -176,16 +164,13 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
                 skProduct: product
             ))
         }
-        // 沙盒 / 无网环境 SKProductsResponse 可能返回空，回退到内置固定标价，保证页面可演示
         if list.isEmpty { list = fallbackProducts() }
-        // 按美元价格升序展示，对齐设计稿从小到大排布
         list.sort { $0.priceUSD < $1.priceUSD }
         availableProducts = list
         dispatchMain { self.delegate?.storeKitDidUpdateProducts(list) }
     }
 
     func request(_ request: SKRequest, didFailWithError error: Error) {
-        // 拉取失败也回退到内置标价，纯本地环境不阻塞 UI
         let list = fallbackProducts()
         availableProducts = list
         dispatchMain { self.delegate?.storeKitDidUpdateProducts(list) }
@@ -205,13 +190,11 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
             let payment = SKPayment(product: product)
             SKPaymentQueue.default().add(payment)
         } else {
-            // 沙盒或无可用 SKProduct 时回退到模拟购买，保证本地流程演示完整
             simulatePurchase(productId: productId)
         }
     }
 
     private func simulatePurchase(productId: String) {
-        // 仅在 SKProduct 不可用时使用；模拟关键节点加载动画
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
             guard let self = self else { return }
             if let product = self.availableProducts.first(where: { $0.productId == productId }) {
@@ -251,7 +234,6 @@ final class StoreKitManager: NSObject, @preconcurrency SKPaymentTransactionObser
             dispatchMain { self.delegate?.storeKitPurchaseStateChanged(false) }
             return
         }
-        // 凭证不做服务端校验，仅以本地回调的成功状态判定订单生效
         dispatchMain {
             self.delegate?.storeKitPurchaseDidSucceed(product, coinsGained: product.coinsAmount)
             self.delegate?.storeKitPurchaseStateChanged(false)

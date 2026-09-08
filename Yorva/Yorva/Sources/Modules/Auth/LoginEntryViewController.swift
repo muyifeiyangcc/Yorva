@@ -2,17 +2,11 @@
 //  LoginEntryViewController.swift
 //  Yorva
 //
-//  登录入口（铁律 2 / 4 / 3 / 13）
-//  - I'm New：直接进入首页游客态；不校验协议 CheckBox（铁律 4）
-//  - Sign In By Email：未勾选弹窗提示，勾选后方可 push 邮箱登录（铁律 4）
-//  - Privacy Policy / Terms of Service：push 网页容器到 https://www.baidu.com（铁律 3）
-//  - 协议 CheckBox 默认未选中
 //
 
 import UIKit
 import SnapKit
 
-/// 启动页设计稿中的白色胶囊按钮。
 private final class LaunchPillButton: UIButton {
     init(title: String) {
         super.init(frame: .zero)
@@ -35,7 +29,6 @@ private final class LaunchPillButton: UIButton {
 
 final class LoginEntryViewController: BaseViewController {
 
-    /// 来自游客拦截流程的标识；用于登录成功后回到根 Tab 页
     var fromGuestFlow: Bool = false
 
     override var pageBackgroundColor: UIColor { AppTheme.bgSplash }
@@ -124,8 +117,12 @@ final class LoginEntryViewController: BaseViewController {
         // Footer sign-up opens the existing registration screen; the separate
         // “I’m New” button keeps its original guest-entry behavior.
         signUpButton.addAction(UIAction { [weak self] _ in
+            guard let self = self, self.isAgreed else {
+                self?.showAgreementRequiredPrompt()
+                return
+            }
             let vc = RegisterViewController()
-            self?.navigationController?.pushViewController(vc, animated: true)
+            self.navigationController?.pushViewController(vc, animated: true)
         }, for: .touchUpInside)
 
         [signInEmailButton, imNewButton, footerStack, checkbox, agreementTextView].forEach {
@@ -203,25 +200,26 @@ final class LoginEntryViewController: BaseViewController {
     // MARK: - Actions
 
     private func handleSignInByEmail() {
-        // 铁律 4：未勾选 CheckBox 弹窗提示，不允许进入邮箱登录页
         guard isAgreed else {
-            ConfirmDialog.show(title: "Agreement Required",
-                               message: "Please read and agree to the agreement first.",
-                               confirmTitle: "OK", cancelTitle: "Cancel",
-                               onConfirm: {})
+            showAgreementRequiredPrompt()
             return
         }
         let emailVC = EmailLoginViewController()
         navigationController?.pushViewController(emailVC, animated: true)
     }
 
+    private func showAgreementRequiredPrompt() {
+        ConfirmDialog.show(title: "Agreement Required",
+                           message: "Please read and agree to the agreement first.",
+                           confirmTitle: "OK", cancelTitle: "Cancel",
+                           onConfirm: {})
+    }
+
     private func handleGuest() {
-        // 铁律 4：游客入口不校验 CheckBox 选中状态，直接放行
         RootCoordinator.shared.routeGuestToMain()
     }
 }
 
-// 协议文字点击跳转（铁律 3：跳转固定链接 https://www.baidu.com）
 extension LoginEntryViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange) -> Bool {
         let web = WebContainerViewController()

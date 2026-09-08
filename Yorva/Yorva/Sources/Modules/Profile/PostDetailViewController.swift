@@ -2,7 +2,6 @@
 //  PostDetailViewController.swift
 //  Yorva
 //
-//  帖子详情：Prompt、媒体、回答、互动、评论和底部评论输入。
 //
 
 import UIKit
@@ -333,7 +332,6 @@ final class PostDetailViewController: BaseViewController {
         authorAvatar.configure(user: author)
         authorNameLabel.text = author?.nickname ?? "Unknown"
         timeLabel.text = "@\(author?.nickname.lowercased().replacingOccurrences(of: " ", with: "") ?? "yorva") · \(value.createdAt.timeAgoDisplay())"
-        // 自己的帖子：隐藏更多按钮（无举报/拉黑）和关注按钮
         let isOwnPost = value.authorId == AccountManager.shared.currentUser?.id
         moreButton.isHidden = isOwnPost
         followButton.isHidden = isOwnPost
@@ -568,7 +566,6 @@ final class CommentRowView: UIView {
         nameLabel.text = author?.nickname ?? "Unknown"
         timeLabel.text = comment.createdAt.timeAgoDisplay()
         bodyLabel.text = comment.text
-        // 自己的评论：隐藏右侧更多按钮（无举报/拉黑）
         moreButton.isHidden = comment.authorId == AccountManager.shared.currentUser?.id
     }
 }

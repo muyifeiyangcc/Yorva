@@ -2,8 +2,6 @@
 //  EditProfileViewController.swift
 //  Yorva
 //
-//  编辑资料（铁律 11 / 12）
-//  头像 / 昵称 / 签名 / 保存后写入仓库即时刷新（铁律 8）
 //
 
 import UIKit

@@ -2,15 +2,11 @@
 //  DataRepository.swift
 //  Yorva
 //
-//  数据仓库统一入口（铁律 8 数据架构要求）
-//  全部页面仅依赖本仓库；修改行为仅操作数据源；页面自动响应刷新
-//  通知中心驱动跨页面状态联动，避免页面单独写死数据
 //
 
 import Foundation
 import UIKit
 
-// MARK: - 数据变更事件
 
 enum DataEvent {
     case profileUpdated
@@ -32,7 +28,6 @@ final class DataRepository {
 
     private(set) var users: [User] = []
 
-    /// 通知名映射（让外部页面通过 NotificationCenter 监听）
     private let notificationName = Notification.Name("yorva.data.didChange")
 
     private init() {
@@ -45,7 +40,6 @@ final class DataRepository {
         return nil
     }
 
-    /// 将注册/编辑后的账号同步到统一用户仓库，保证跨页面、跨账号都能解析头像和资料。
     func upsertUser(_ user: User) {
         guard let index = users.firstIndex(where: { $0.id == user.id }) else {
             users.append(user)
@@ -54,7 +48,6 @@ final class DataRepository {
         users[index] = user
     }
 
-    /// 重置全部数据（调试 / 数据解析异常兜底）
     func resetAll() {
         users = SeedData.mockUsers()
         AccountManager.shared.accounts.forEach { upsertUser($0) }
@@ -62,7 +55,6 @@ final class DataRepository {
         ChatManager.shared.reloadSeed()
     }
 
-    // MARK: - 广播与订阅
 
     func broadcast(_ event: DataEvent) {
         DispatchQueue.main.async {

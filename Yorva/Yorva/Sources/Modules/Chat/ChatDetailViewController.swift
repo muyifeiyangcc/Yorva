@@ -2,10 +2,6 @@
 //  ChatDetailViewController.swift
 //  Yorva
 //
-//  私聊页：文本 / 图片 / 语音消息（铁律 11）
-//  - 点击图片按钮：自定义底部 sheet 选择相册 / 拍照；图片按原比例显示
-//  - 第一次点击录音：弹系统录音权限弹窗，同意后再按下才开始录音，松开发送
-//  - 语音消息：左侧播放 / 暂停 + 中间进度条 + 右侧总时长
 //
 
 import UIKit
@@ -34,8 +30,7 @@ final class ChatDetailViewController: BaseViewController {
     private var messages: [ChatMessage] = []
     private var mediaPicker: MediaPickerCoordinator?
     private var audioRecorder: AVAudioRecorder?
-    private var voiceTouchStartedAt: Date?
-    private var finishVoiceOnTouchUp = false
+    private var recordingStartedAt: Date?
     private var audioPlayer: AVAudioPlayer?
     private var playbackTimer: Timer?
     private var playingMessageId: String?
@@ -113,10 +108,8 @@ final class ChatDetailViewController: BaseViewController {
         voiceButton.layer.borderWidth = 1
         voiceButton.layer.borderColor = UIColor(hex: 0xE1E0D9).cgColor
         voiceButton.setImage(UIImage(systemName: "circle.inset.filled")?.withTintColor(AppTheme.ink, renderingMode: .alwaysOriginal), for: .normal)
-        // Support both interactions: a longer press records until release;
-        // a quick tap starts recording and the next tap finishes it.
-        voiceButton.addTarget(self, action: #selector(handleVoiceTouchDown), for: .touchDown)
-        voiceButton.addTarget(self, action: #selector(handleVoiceTouchUp), for: [.touchUpInside, .touchUpOutside, .touchCancel])
+        // Tap to toggle: first tap starts recording, second tap finishes & sends.
+        voiceButton.addAction(UIAction { [weak self] _ in self?.handleVoiceToggle() }, for: .touchUpInside)
         messageField.placeholder = "Write a message..."
         messageField.font = .systemFont(ofSize: 12, weight: .regular)
         messageField.backgroundColor = .white
@@ -245,7 +238,6 @@ final class ChatDetailViewController: BaseViewController {
         messageField.text = ""
     }
 
-    /// 铁律 11：点击图片按钮 → 自定义底部 sheet（相册 / 拍照），图片按原比例显示
     private func handlePickImage() {
         CustomSheet.show(title: "Send image", items: [
             SheetItem(title: "Choose from album", icon: "photo.on.rectangle", isCancel: false) { [weak self] in
@@ -273,14 +265,15 @@ final class ChatDetailViewController: BaseViewController {
                                      color: .clear, ratio: ratio, image: image)
     }
 
-    /// 按住录音并松开发送；快速点击时，第一次点击开始、第二次点击结束。
-    @objc private func handleVoiceTouchDown() {
-        voiceTouchStartedAt = Date()
+    @objc private func handleVoiceToggle() {
         if audioRecorder != nil {
-            finishVoiceOnTouchUp = true
-            return
+            finishRecording()
+        } else {
+            beginRecordingFlow()
         }
-        finishVoiceOnTouchUp = false
+    }
+
+    private func beginRecordingFlow() {
         let session = AVAudioSession.sharedInstance()
         switch session.recordPermission {
         case .granted:
@@ -303,21 +296,6 @@ final class ChatDetailViewController: BaseViewController {
         }
     }
 
-    @objc private func handleVoiceTouchUp() {
-        let elapsed = voiceTouchStartedAt.map { Date().timeIntervalSince($0) } ?? 0
-        defer {
-            voiceTouchStartedAt = nil
-            finishVoiceOnTouchUp = false
-        }
-        guard audioRecorder != nil else { return }
-        // A short tap is treated as “start”; the next tap will finish it.
-        if finishVoiceOnTouchUp || elapsed >= 0.35 {
-            finishRecording()
-        } else {
-            Toast.show("Recording… tap again to finish.")
-        }
-    }
-
     private func startRecording() {
         guard audioRecorder == nil else { return }
         let session = AVAudioSession.sharedInstance()
@@ -336,9 +314,12 @@ final class ChatDetailViewController: BaseViewController {
             recorder.prepareToRecord()
             guard recorder.record() else { throw NSError(domain: "YorvaAudio", code: 1) }
             audioRecorder = recorder
+            recordingStartedAt = Date()
             voiceButton.backgroundColor = UIColor(hex: 0xD9FF3F)
+            Toast.show("Recording… tap again to send.")
         } catch {
             audioRecorder = nil
+            recordingStartedAt = nil
             resetVoiceButtonAppearance()
             Toast.show("Unable to start recording.")
         }
@@ -346,20 +327,32 @@ final class ChatDetailViewController: BaseViewController {
 
     private func finishRecording() {
         guard let recorder = audioRecorder else { return }
-        let duration = recorder.currentTime
+        let duration = recorder.currentTime > 0.1
+            ? recorder.currentTime
+            : recordingStartedAt.map { Date().timeIntervalSince($0) } ?? 1
         let url = recorder.url
         recorder.stop()
         audioRecorder = nil
+        recordingStartedAt = nil
         resetVoiceButtonAppearance()
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         guard let conv = conversation else { return }
         let me = AccountManager.shared.currentUser?.id ?? "self"
-        // Keep even a very short valid recording and display at least one
-        // second, instead of silently deleting it before it reaches the chat.
-        ChatManager.shared.sendVoice(conversationId: conv.id, senderId: me,
-                                     duration: max(1, duration),
-                                     audioURL: FileManager.default.fileExists(atPath: url.path) ? url : nil)
-        refreshData()
+        let fileExists = FileManager.default.fileExists(atPath: url.path)
+        let message = ChatManager.shared.sendVoice(conversationId: conv.id, senderId: me,
+                                                   duration: max(1, duration),
+                                                   audioURL: fileExists ? url : nil)
+        if let idx = messages.firstIndex(where: { $0.id == message.id }) {
+            messages[idx] = message
+        } else {
+            messages.append(message)
+        }
+        messages.sort { $0.createdAt < $1.createdAt }
+        tableView.reloadData()
+        if !messages.isEmpty {
+            let path = IndexPath(row: messages.count - 1, section: 0)
+            tableView.scrollToRow(at: path, at: .bottom, animated: true)
+        }
     }
 
     private func resetVoiceButtonAppearance() {
@@ -510,7 +503,6 @@ final class ImageMessageCell: UITableViewCell {
         contentView.addSubview(imageView_)
         imageView_.layer.cornerRadius = 12
         imageView_.layer.masksToBounds = true
-        // 聊天图片保持原始比例完整显示，不能使用 aspectFill 裁切内容。
         contentImageView.contentMode = .scaleAspectFit
         contentImageView.clipsToBounds = true
         imageView_.addSubview(contentImageView)
@@ -526,7 +518,6 @@ final class ImageMessageCell: UITableViewCell {
         imageView_.backgroundColor = image == nil ? color : .clear
         contentImageView.image = image
         contentImageView.isHidden = image == nil
-        // 铁律 11：图片按原比例显示
         // Fit the container itself to the source aspect ratio so portrait
         // images do not expose colored side bars.
         let safeRatio = max(ratio, 0.1)
@@ -556,7 +547,9 @@ final class VoiceMessageCell: UITableViewCell {
     static let reuseIdentifier = "VoiceMessageCell"
     weak var delegate: VoiceMessageCellDelegate?
     private let bubble = UIView()
-    private let playButton = UIButton(type: .system)
+    // Use a custom button so the selected (pause) state does not inherit the
+    // filled system-button appearance on newer iOS versions.
+    private let playButton = UIButton(type: .custom)
     private let progressView = UIProgressView(progressViewStyle: .bar)
     private let durationLabel = UILabel()
     private var messageId: String?
@@ -570,6 +563,10 @@ final class VoiceMessageCell: UITableViewCell {
             .withTintColor(AppTheme.ink, renderingMode: .alwaysOriginal), for: .normal)
         playButton.setImage(UIImage(systemName: "pause.fill")?
             .withTintColor(AppTheme.ink, renderingMode: .alwaysOriginal), for: .selected)
+        playButton.backgroundColor = .clear
+        playButton.adjustsImageWhenHighlighted = false
+        playButton.contentHorizontalAlignment = .center
+        playButton.contentVerticalAlignment = .center
         playButton.addAction(UIAction { [weak self] _ in
             guard let self = self, let messageId = self.messageId else { return }
             self.delegate?.voiceMessageCellDidTapPlay(self, messageId: messageId)
@@ -583,6 +580,7 @@ final class VoiceMessageCell: UITableViewCell {
         bubble.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview().inset(4)
             make.width.equalTo(200)
+            make.height.equalTo(44)
         }
         playButton.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(8)
@@ -614,6 +612,7 @@ final class VoiceMessageCell: UITableViewCell {
         bubble.snp.remakeConstraints { make in
             make.top.bottom.equalToSuperview().inset(4)
             make.width.equalTo(200)
+            make.height.equalTo(44)
             if isSelf { make.right.equalToSuperview().offset(-16) }
             else { make.left.equalToSuperview().offset(16) }
         }

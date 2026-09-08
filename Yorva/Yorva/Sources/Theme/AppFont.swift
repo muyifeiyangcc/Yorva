@@ -2,8 +2,6 @@
 //  AppFont.swift
 //  Yorva
 //
-//  字体便捷工厂（系统字体，禁止引入自定义字体文件）
-//  来源：docs/ios-design-spec.md 第 5.1 章
 //
 
 import UIKit

@@ -2,9 +2,6 @@
 //  PostCardCell.swift
 //  Yorva
 //
-//  帖子卡片 cell（Home / Following / ThemeDetail / Profile 复用）
-//  - 原比例媒体展示（铁律 11：图片按原比例显示）
-//  - 头像 / 作者 / 时间 / 更多菜单 / Like / Comment / Save 全部对齐设计稿
 //
 
 import UIKit
@@ -152,7 +149,7 @@ final class PostCardCell: UITableViewCell {
         mediaView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(promptTitleLabel.snp.bottom).offset(14)
-            make.height.equalTo(0)  // 默认无媒体高度 0；configure 时按需 remake
+            make.height.equalTo(0)
         }
         mediaPlaceholder.snp.makeConstraints { make in make.edges.equalToSuperview() }
         mediaImageView.snp.makeConstraints { make in make.edges.equalToSuperview() }
@@ -194,7 +191,6 @@ final class PostCardCell: UITableViewCell {
         authorAvatar.configure(user: author)
         authorNameLabel.text = author?.nickname ?? "Unknown"
         timeLabel.text = post.createdAt.timeAgoDisplay()
-        // 自己的帖子：隐藏更多按钮（无举报/拉黑）
         let isOwnPost = post.authorId == AccountManager.shared.currentUser?.id
         moreButton.isHidden = isOwnPost
         if let promptId = post.promptId, let prompt = ContentManager.shared.prompt(by: promptId) {
@@ -209,7 +205,6 @@ final class PostCardCell: UITableViewCell {
             mediaPlaceholder.backgroundColor = media.placeholderColor
             videoBadge.isHidden = media.kind != .video
             if let resolved = media.resolvedImage {
-                // Asset 图片或用户选择的图片
                 thumbnailGenerator?.cancelAllCGImageGeneration()
                 thumbnailGenerator = nil
                 mediaImageView.image = resolved
@@ -217,12 +212,10 @@ final class PostCardCell: UITableViewCell {
             } else {
                 mediaImageView.image = nil
                 mediaImageView.isHidden = true
-                // 视频帖：无静态图时从 Bundle / 运行期视频异步取首帧缩略图
                 if media.kind == .video, let videoURL = media.resolvedVideoURL {
                     generateVideoThumbnail(for: videoURL)
                 }
             }
-            // 固定 0.73 比例裁切展示（竖图 scaleAspectFill 裁剪）
             mediaView.snp.remakeConstraints { make in
                 make.left.right.equalToSuperview()
                 make.top.equalTo(promptTitleLabel.snp.bottom).offset(14)
@@ -256,7 +249,6 @@ final class PostCardCell: UITableViewCell {
         saveButton.titleLabel?.font = AppFont.caption()
     }
 
-    /// 视频帖缩略图：取视频首帧；cell 复用后通过 token 丢弃过期回调
     private func generateVideoThumbnail(for videoURL: URL) {
         let token = videoURL.absoluteString
         thumbnailToken = token

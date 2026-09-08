@@ -2,7 +2,6 @@
 //  CreatePostContentViewController.swift
 //  Yorva
 //
-//  发帖第二步：选择媒体、填写短答并发布。
 //
 
 import UIKit

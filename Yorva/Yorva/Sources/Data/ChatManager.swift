@@ -2,7 +2,6 @@
 //  ChatManager.swift
 //  Yorva
 //
-//  聊天会话 / 消息 / Yorva AI：按账号持久化，支持图片和录音引用。
 //
 
 import Foundation
@@ -110,7 +109,6 @@ final class ChatManager {
         return conversations.first { $0.id == id }
     }
 
-    /// 将从个人资料页打开的临时会话注册到列表，确保首条消息后能在 ChatList 中出现。
     func registerConversation(_ conversation: Conversation) {
         ensureLoadedForCurrentUser()
         guard !conversations.contains(where: { $0.id == conversation.id }) else { return }

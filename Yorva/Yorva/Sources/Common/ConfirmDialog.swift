@@ -2,7 +2,6 @@
 //  ConfirmDialog.swift
 //  Yorva
 //
-//  全局统一的自定义确认弹窗：动态高度、双按钮、品牌色样式。
 //
 
 import UIKit
@@ -104,7 +103,6 @@ final class ConfirmDialog {
         UIView.animate(withDuration: 0.2) { overlay.alpha = 1 }
     }
 
-    /// 金币不足弹窗：展示余额与所需金额，提供 Recharge 按钮进入充值页
     static func showInsufficientCoins(needed: Int,
                                       onRecharge: @escaping () -> Void) {
         let balance = CurrencyManager.shared.coins

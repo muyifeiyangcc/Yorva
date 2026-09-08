@@ -2,7 +2,6 @@
 //  SplashViewController.swift
 //  Yorva
 //
-//  启动过渡页：品牌图形 + 标语，完成过渡后回调
 //
 
 import UIKit

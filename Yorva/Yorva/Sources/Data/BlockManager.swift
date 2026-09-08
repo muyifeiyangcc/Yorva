@@ -2,7 +2,6 @@
 //  BlockManager.swift
 //  Yorva
 //
-//  拉黑业务：关系按 blocker 账号持久化，并实时过滤内容。
 //
 
 import Foundation
@@ -16,7 +15,6 @@ final class BlockManager {
 
     private init() { load() }
 
-    /// 保留原有读取 API，但返回当前账号自己的拉黑列表。
     var blockedIds: [String] { entriesForCurrentUser().map(\.blockedId) }
 
     func isBlocked(_ userId: String) -> Bool { blockedIds.contains(userId) }
@@ -69,7 +67,6 @@ final class BlockManager {
             relationsByUser = decoded
             return
         }
-        // 一次性兼容旧版全局列表，并归属给当前账号。
         if let old = UserDefaults.standard.stringArray(forKey: "yorva.block.list.v1"), !old.isEmpty {
             relationsByUser[currentUserKey] = old.map { BlockEntry(blockedId: $0, createdAt: Date()) }
             persist()
