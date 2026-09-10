@@ -223,8 +223,13 @@ final class LoginEntryViewController: BaseViewController {
 extension LoginEntryViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange) -> Bool {
         let web = WebContainerViewController()
-        web.title = url.absoluteString == "tos" ? "Terms of Service" : "Privacy Policy"
-        web.targetURL = Foundation.URL(string: "https://www.baidu.com")
+        if url.absoluteString == "tos" {
+            web.title = "Terms of Service"
+            web.targetURL = Foundation.URL(string: "https://sites.google.com/view/yorva/users")
+        } else {
+            web.title = "Privacy Policy"
+            web.targetURL = Foundation.URL(string: "https://sites.google.com/view/yorva/privacy")
+        }
         navigationController?.pushViewController(web, animated: true)
         return false
     }

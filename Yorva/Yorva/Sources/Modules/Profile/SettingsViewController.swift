@@ -248,7 +248,9 @@ final class SettingsViewController: BaseViewController {
     private func openLegal(title: String) {
         let vc = WebContainerViewController()
         vc.title = title
-        vc.targetURL = URL(string: "https://www.baidu.com")
+        vc.targetURL = URL(string: title == "Privacy Policy"
+            ? "https://sites.google.com/view/yorva/privacy"
+            : "https://sites.google.com/view/yorva/users")
         navigationController?.pushViewController(vc, animated: true)
     }
 
